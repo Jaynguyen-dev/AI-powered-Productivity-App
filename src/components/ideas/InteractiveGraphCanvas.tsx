@@ -1171,9 +1171,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                 variant="subtle"
                 className="w-36 h-28 p-1.5 relative overflow-hidden border-white/10 bg-white/10 backdrop-blur-2xl shadow-xl"
               >
-                <div className="absolute top-1 left-2 text-[9px] font-mono text-white/60 uppercase tracking-wider">
-                  Radar
-                </div>
+                
                 <svg className="w-full h-full">
                   {/* Mini nodes */}
                   {ideas.map((idea) => {
