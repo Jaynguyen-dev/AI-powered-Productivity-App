@@ -110,7 +110,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     setSimulationEpoch((prev) => prev + 1);
   }, []);
 
-
+  
 
   // Initialize node positions with expansive, anti-clustering distribution
   useEffect(() => {
@@ -314,7 +314,8 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     };
   }, [physicsActive, draggedNodeId, edges, spacingMode, layoutFrozen, simulationEpoch]);
 
-
+  // One-click action to spread nodes radially and uncluster
+  
 
   // Zoom controls
   const handleZoomIn = () => setZoom((z) => Math.min(2.5, z + 0.25));
@@ -860,7 +861,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                     <circle
                       r={isSelected ? 7 : 5}
                       fill={visuals.stroke} // Use the stroke color for solid dot
-                      className="transition-all duration-200"
+                      className="shadow-xl transition-all duration-200"
                     />
 
                     {/* Pinned marker */}
