@@ -22,7 +22,7 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
   if (priority === 'high') {
     return (
       <span
-        className={`${baseClasses} bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_10px_rgba(244,63,94,0.1)]`}
+        className={`${baseClasses} bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.1)]`}
         title="High Priority"
       >
         <AlertCircle className="w-3 h-3" />
@@ -34,7 +34,7 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
   if (priority === 'medium') {
     return (
       <span
-        className={`${baseClasses} bg-blue-500/10 text-blue-400 border border-blue-500/20`}
+        className={`${baseClasses} bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[0_0_10px_rgba(251,191,36,0.1)]`}
         title="Medium Priority"
       >
         <Clock className="w-3 h-3" />
@@ -45,7 +45,7 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
 
   return (
     <span
-      className={`${baseClasses} bg-white/5 text-white/50 border border-white/10`}
+      className={`${baseClasses} bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]`}
       title="Low Priority"
     >
       <ArrowDown className="w-3 h-3" />

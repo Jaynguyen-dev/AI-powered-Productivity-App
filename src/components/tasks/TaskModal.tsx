@@ -123,8 +123,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 onClick={() => setPriority(lvl)}
                 className={`p-2.5 rounded-xl border flex flex-col items-center gap-1 transition-all cursor-pointer ${
                   priority === lvl
-                    ? 'bg-white/60 border-blue-400 ring-2 ring-blue-500/30 shadow-md'
-                    : 'bg-white/10 border-white/10 hover:bg-white/5 opacity-70 hover:opacity-100'
+                    ? (lvl === "high" ? "bg-rose-500/5 border-rose-500 ring-2 ring-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.15)]" : 
+                       lvl === "medium" ? "bg-amber-500/5 border-amber-500 ring-2 ring-amber-500/30 shadow-[0_0_15px_rgba(251,191,36,0.15)]" : 
+                       "bg-emerald-500/5 border-emerald-500 ring-2 ring-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]")
+                    : "bg-white/5 border-white/10 hover:bg-white/10 opacity-70 hover:opacity-100"
                 }`}
               >
                 <PriorityBadge priority={lvl} showBars={true} size="md" />
