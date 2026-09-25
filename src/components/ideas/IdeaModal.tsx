@@ -231,7 +231,7 @@ export const IdeaModal: React.FC<IdeaModalProps> = ({
                     <button
                       type="button"
                       onClick={() => onRemoveEdge(edge.id)}
-                      className="text-white/60 hover:text-blue-400 p-1 rounded hover:bg-blue-950/40 transition-colors"
+                      className="text-white/60 hover:text-rose-400 p-1 rounded hover:bg-rose-950/40 transition-colors"
                       title="Remove Connection"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -261,7 +261,7 @@ export const IdeaModal: React.FC<IdeaModalProps> = ({
                     <button
                       type="button"
                       onClick={() => onRemoveEdge(edge.id)}
-                      className="text-white/60 hover:text-blue-400 p-1 rounded hover:bg-blue-950/40 transition-colors"
+                      className="text-white/60 hover:text-rose-400 p-1 rounded hover:bg-rose-950/40 transition-colors"
                       title="Remove Connection"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -296,7 +296,7 @@ export const IdeaModal: React.FC<IdeaModalProps> = ({
                 onDeleteIdea(idea.id);
                 onClose();
               }}
-              className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-950/40 rounded-xl transition-colors cursor-pointer"
+              className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer"
               title="Delete Idea"
             >
               <Trash2 className="w-4 h-4" />

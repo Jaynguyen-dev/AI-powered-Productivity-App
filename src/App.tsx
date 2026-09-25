@@ -42,6 +42,12 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 
+const getLocalDateString = () => {
+  const d = new Date();
+  const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
 export default function App() {
   // Navigation
   const [activeTab, setActiveTab] = useState<'dashboard' | 'calendar' | 'tasks' | 'ideas' | 'projects'>('dashboard');
@@ -84,7 +90,7 @@ export default function App() {
 
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [eventToEdit, setEventToEdit] = useState<CalendarEvent | null>(null);
-  const [eventDefaultDate, setEventDefaultDate] = useState(new Date().toISOString().split('T')[0]);
+  const [eventDefaultDate, setEventDefaultDate] = useState(getLocalDateString());
 
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
@@ -506,7 +512,7 @@ export default function App() {
             }}
             onOpenCreateEventModal={(defaultDate) => {
               setEventToEdit(null);
-              setEventDefaultDate(defaultDate || new Date().toISOString().split('T')[0]);
+              setEventDefaultDate(defaultDate || getLocalDateString());
               setEventModalOpen(true);
             }}
             onEditEvent={(evt) => {

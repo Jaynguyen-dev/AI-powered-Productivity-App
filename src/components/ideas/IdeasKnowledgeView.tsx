@@ -292,7 +292,7 @@ export const IdeasKnowledgeView: React.FC<IdeasKnowledgeViewProps> = ({
                             onDeleteIdea(idea.id);
                           }
                         }}
-                        className="p-1.5 rounded-lg bg-blue-950/50 hover:bg-blue-900/60 text-blue-300 border border-blue-500/30 text-sm transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-blue-500/30 text-sm transition-colors cursor-pointer"
                         title="Delete Idea"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

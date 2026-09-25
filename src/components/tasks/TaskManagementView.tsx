@@ -467,7 +467,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onDeleteTask(task.id)}
-                    className="p-1.5 rounded-lg text-white/60 hover:text-blue-500 hover:bg-blue-950/40 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-white/60 hover:text-rose-500 hover:bg-rose-950/40 transition-colors cursor-pointer"
                     title="Delete Task"
                   >
                     <Trash2 className="w-4 h-4" />

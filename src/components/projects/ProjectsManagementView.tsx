@@ -132,7 +132,7 @@ export const ProjectsManagementView: React.FC<ProjectsManagementViewProps> = ({
                     onDeleteProject(selectedProject.id);
                       setSelectedProjectId(null);
                   }}
-                  className="p-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 transition-colors cursor-pointer"
+                  className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
                   title="Delete Project"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -203,7 +203,7 @@ export const ProjectsManagementView: React.FC<ProjectsManagementViewProps> = ({
                           onClick={() => {
                             onDeleteIdea(idea.id);
                           }}
-                          className="p-1.5 rounded-lg text-white/50 hover:bg-blue-500/20 hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+                          className="p-1.5 rounded-lg text-white/50 hover:bg-rose-500/20 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
                           title="Delete Idea"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

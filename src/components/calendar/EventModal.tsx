@@ -239,7 +239,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                 onDelete(eventToEdit.id);
                 onClose();
               }}
-              className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-950/40 rounded-xl transition-colors flex items-center gap-1.5 text-sm cursor-pointer"
+              className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 rounded-xl transition-colors flex items-center gap-1.5 text-sm cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
               <span>Delete</span>

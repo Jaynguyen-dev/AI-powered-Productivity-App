@@ -43,7 +43,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     `${d.getFullYear()}-${formatZero(d.getMonth() + 1)}-${formatZero(d.getDate())}`;
 
   // Helper date calculations
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = formatDateString(new Date());
 
   // Navigate calendar
   const handlePrev = () => {

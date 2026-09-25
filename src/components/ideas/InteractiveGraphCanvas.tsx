@@ -1301,7 +1301,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                         onSelectIdea(null);
                       }
                     }}
-                    className="py-1.5 px-2 rounded-xl bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-500/40 text-sm font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                    className="py-1.5 px-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-blue-500/40 text-sm font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
                     title="Delete Idea"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
