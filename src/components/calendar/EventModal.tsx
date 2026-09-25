@@ -126,7 +126,7 @@ export const EventModal: React.FC<EventModalProps> = ({
           <div>
             <label className="block text-sm font-medium text-white/80 mb-1">Date</label>
             <input
-              type="date"
+              type="date" min={new Date().toLocaleDateString("en-CA")}
               required
               value={startDate}
               onChange={(e) => {

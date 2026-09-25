@@ -110,28 +110,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     setSimulationEpoch((prev) => prev + 1);
   }, []);
 
-  const toggleFreezeLayout = useCallback(() => {
-    setLayoutFrozen((prevFrozen) => {
-      const willFreeze = !prevFrozen;
-      if (willFreeze) {
-        alphaRef.current = 0;
-        setIsLayoutStable(true);
-        // Zero out velocities
-        setNodePositions((prev) => {
-          const next = { ...prev };
-          Object.keys(next).forEach((k) => {
-            if (next[k]) {
-              next[k] = { ...next[k], vx: 0, vy: 0 };
-            }
-          });
-          return next;
-        });
-      } else {
-        reheatSimulation(0.8);
-      }
-      return willFreeze;
-    });
-  }, [reheatSimulation]);
+
 
   // Initialize node positions with expansive, anti-clustering distribution
   useEffect(() => {
@@ -335,140 +314,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     };
   }, [physicsActive, draggedNodeId, edges, spacingMode, layoutFrozen, simulationEpoch]);
 
-  // One-click action to spread nodes radially and uncluster
-  const handleSpreadNodes = useCallback(() => {
-    setNodePositions((prev) => {
-      const keys = Object.keys(prev);
-      if (keys.length <= 1) return prev;
 
-      let cx = 0;
-      let cy = 0;
-      keys.forEach((k) => {
-        cx += prev[k].x;
-        cy += prev[k].y;
-      });
-      cx /= keys.length;
-      cy /= keys.length;
-
-      const next: Record<string, NodePosition> = {};
-      const count = keys.length;
-
-      keys.forEach((k, idx) => {
-        const node = prev[k];
-        let dx = node.x - cx;
-        let dy = node.y - cy;
-        let dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < 30) {
-          const angle = (idx / count) * 2 * Math.PI;
-          dx = Math.cos(angle);
-          dy = Math.sin(angle);
-          dist = 1;
-        }
-
-        // Expand radial distance by 1.45x with minimum distance
-        const expandedDist = Math.max(dist * 1.45, 270);
-        next[k] = {
-          ...node,
-          x: cx + (dx / dist) * expandedDist,
-          y: cy + (dy / dist) * expandedDist,
-          vx: 0,
-          vy: 0,
-        };
-      });
-
-      return next;
-    });
-
-    // Reheat smoothly so nodes settle into crystal clarity
-    reheatSimulation(1.0);
-  }, [reheatSimulation]);
-
-
-
-  // Compute connected nodes for neighborhood highlighting
-  const activeFocusId = hoveredNodeId || selectedIdeaId;
-  const connectedNodeIds = useMemo(() => {
-    if (!activeFocusId) return new Set<string>();
-    const set = new Set<string>([activeFocusId]);
-    edges.forEach((edge) => {
-      if (edge.sourceId === activeFocusId) set.add(edge.targetId);
-      if (edge.targetId === activeFocusId) set.add(edge.sourceId);
-    });
-    return set;
-  }, [activeFocusId, edges]);
-
-  // Handle Pan
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.target === containerRef.current || (e.target as HTMLElement).tagName === 'svg') {
-      setIsPanning(true);
-      setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-    }
-  };
-
-  // Convert screen coordinates to canvas space coordinates
-  const screenToCanvas = useCallback(
-    (clientX: number, clientY: number) => {
-      if (!containerRef.current) return { x: 0, y: 0 };
-      const rect = containerRef.current.getBoundingClientRect();
-      return {
-        x: (clientX - rect.left - pan.x) / zoom,
-        y: (clientY - rect.top - pan.y) / zoom,
-      };
-    },
-    [pan, zoom]
-  );
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const cPos = screenToCanvas(e.clientX, e.clientY);
-    setMouseCanvasPos(cPos);
-
-    if (isPanning) {
-      setPan({
-        x: e.clientX - panStart.x,
-        y: e.clientY - panStart.y,
-      });
-    } else if (draggedNodeId) {
-      setNodePositions((prev) => ({
-        ...prev,
-        [draggedNodeId]: {
-          ...prev[draggedNodeId],
-          x: cPos.x,
-          y: cPos.y,
-          vx: 0,
-          vy: 0,
-        },
-      }));
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsPanning(false);
-    if (draggedNodeId && !layoutFrozen) {
-      reheatSimulation(0.35);
-    }
-    setDraggedNodeId(null);
-  };
-
-  // Wheel zoom around cursor
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    if (!containerRef.current) return;
-
-    const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
-    const newZoom = Math.min(2.5, Math.max(0.35, zoom * zoomFactor));
-
-    const rect = containerRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    // Adjust pan so mouse point remains stationary
-    const newPanX = mouseX - ((mouseX - pan.x) / zoom) * newZoom;
-    const newPanY = mouseY - ((mouseY - pan.y) / zoom) * newZoom;
-
-    setZoom(newZoom);
-    setPan({ x: newPanX, y: newPanY });
-  };
 
   // Zoom controls
   const handleZoomIn = () => setZoom((z) => Math.min(2.5, z + 0.25));
@@ -683,85 +529,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
             </button>
           </div>
 
-          {viewStyle === 'canvas' && (
-            <>
-              <button
-                type="button"
-                onClick={() => setPhysicsActive(!physicsActive)}
-                className={`px-3 py-1.5 rounded-xl border text-sm font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  physicsActive
-                    ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40 shadow-sm'
-                    : 'bg-white/10 text-white/60 border-white/10 hover:text-white'
-                }`}
-                title={physicsActive ? 'Pause auto-physics simulation' : 'Resume organic auto-physics'}
-              >
-                {physicsActive ? <Pause className="w-3.5 h-3.5 text-emerald-400" /> : <Play className="w-3.5 h-3.5" />}
-                <span>{physicsActive ? 'Physics Live' : 'Physics Paused'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={toggleFreezeLayout}
-                className={`px-3 py-1.5 rounded-xl border text-sm font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm ${
-                  layoutFrozen
-                    ? 'bg-amber-950/70 text-amber-300 border-red-500/40'
-                    : 'bg-white/10 text-white/80 border-white/10 hover:text-white'
-                }`}
-                title={layoutFrozen ? 'Unlock layout physics' : 'Freeze and lock current node positions completely'}
-              >
-                {layoutFrozen ? <Lock className="w-3.5 h-3.5 text-amber-400" /> : <Unlock className="w-3.5 h-3.5 text-white/60" />}
-                <span>{layoutFrozen ? 'Locked' : 'Lock Layout'}</span>
-              </button>
-
-              {/* Stability status indicator */}
-              <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/20 border border-white/10 text-[11px]">
-                {isLayoutStable || layoutFrozen ? (
-                  <span className="flex items-center gap-1 text-emerald-400 font-medium">
-                    <ShieldCheck className="w-3.5 h-3.5" /> Stable
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5 text-blue-400 font-medium animate-pulse">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Settling
-                  </span>
-                )}
-              </div>
-
-              {/* Spread / De-cluster Action */}
-              <button
-                type="button"
-                onClick={handleSpreadNodes}
-                className="px-3 py-1.5 rounded-xl bg-blue-500/20 hover:bg-blue-500/35 text-blue-200 border border-blue-500/40 text-sm font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
-                title="Spread nodes outward and eliminate overlap clusters"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-                <span>Spread Graph</span>
-              </button>
-
-
-
-              {/* Spacing Mode Toggle */}
-              <div className="hidden md:flex items-center rounded-xl bg-white/10 border border-white/[0.14] p-1 shadow-sm">
-                {(['compact', 'balanced', 'expansive'] as const).map((mode) => (
-                  <button
-                    key={mode}
-                    type="button"
-                    onClick={() => {
-                      setSpacingMode(mode);
-                      reheatSimulation(0.7);
-                    }}
-                    className={`px-2 py-1 rounded-lg text-[11px] font-medium capitalize transition-all cursor-pointer ${
-                      spacingMode === mode
-                        ? 'bg-blue-500 text-white font-semibold shadow-sm'
-                        : 'text-white/60 hover:text-white'
-                    }`}
-                    title={`${mode.charAt(0).toUpperCase() + mode.slice(1)} Node Spacing`}
-                  >
-                    {mode}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
+          
         </div>
 
         {/* Canvas Zoom & Tool Controls */}
@@ -820,7 +588,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          onWheel={handleWheel}
+          
           onDoubleClick={handleDoubleClick}
           className="relative w-full h-[640px] md:h-[680px] rounded-3xl bg-white/10 backdrop-blur-2xl border border-white/[0.18] overflow-hidden select-none cursor-grab active:cursor-grabbing shadow-[0_20px_50px_-10px_rgba(0,0,0,0.6),inset_0_1px_1px_0_rgba(255,255,255,0.25)]"
         >
@@ -1092,7 +860,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                     <circle
                       r={isSelected ? 7 : 5}
                       fill={visuals.stroke} // Use the stroke color for solid dot
-                      className="shadow-xl transition-all duration-200"
+                      className="transition-all duration-200"
                     />
 
                     {/* Pinned marker */}

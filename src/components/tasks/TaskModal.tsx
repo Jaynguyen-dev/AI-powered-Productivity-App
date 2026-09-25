@@ -146,7 +146,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               Due Date
             </label>
             <input
-              type="date"
+              type="date" min={new Date().toLocaleDateString("en-CA")}
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"

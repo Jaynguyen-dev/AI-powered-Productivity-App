@@ -123,7 +123,7 @@ export const IdeaModal: React.FC<IdeaModalProps> = ({
             <select
               value={type}
               onChange={(e) => setType(e.target.value as IdeaType)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none capitalize"
+              className="w-full px-3 py-2 rounded-xl bg-white/80 backdrop-blur-md border border-white/40 text-black text-base focus:outline-none capitalize font-medium [&>option]:bg-white [&>option]:text-black"
             >
               <option value="concept">Concept (Core Architecture)</option>
               <option value="hypothesis">Hypothesis (Testable Guess)</option>
@@ -142,7 +142,7 @@ export const IdeaModal: React.FC<IdeaModalProps> = ({
             <select
               value={connectedProjectId}
               onChange={(e) => setConnectedProjectId(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl bg-white/80 backdrop-blur-md border border-white/40 text-black text-base focus:outline-none font-medium [&>option]:bg-white [&>option]:text-black"
             >
               <option value="">No Project (Independent Node)</option>
               {projects.map((p) => (
@@ -177,7 +177,7 @@ export const IdeaModal: React.FC<IdeaModalProps> = ({
             value={tagsInput}
             onChange={(e) => setTagsInput(e.target.value)}
             placeholder="e.g. vision, distillation, optimization"
-            className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
+            className="w-full px-3 py-2 rounded-xl bg-white/80 backdrop-blur-md border border-white/40 text-black text-base focus:outline-none font-medium [&>option]:bg-white [&>option]:text-black"
           />
         </div>
 

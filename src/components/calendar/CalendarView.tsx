@@ -20,6 +20,7 @@ interface CalendarViewProps {
   onOpenCreateEventModal: (defaultDate?: string) => void;
   onEditEvent: (event: CalendarEvent) => void;
   onToggleTaskComplete?: (taskId: string) => void;
+  onEditTask?: (task: Task) => void;
 }
 
 export const CalendarView: React.FC<CalendarViewProps> = ({
@@ -30,6 +31,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   onOpenCreateEventModal,
   onEditEvent,
   onToggleTaskComplete,
+  onEditTask,
 }) => {
   // Current view mode: day, week, month
   const [viewMode, setViewMode] = useState<CalendarViewMode>('week');
@@ -167,19 +169,25 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const getCategoryColorBadge = (cat: string) => {
     switch (cat) {
-      case 'meeting':
-        return 'border-blue-500/40 bg-blue-950/60 text-blue-300';
-      case 'study':
-        return 'border-emerald-500/40 bg-emerald-950/60 text-emerald-300';
-      case 'deep_work':
-        return 'border-blue-500/40 bg-blue-950/60 text-blue-300';
-      case 'personal':
-        return 'border-red-500/40 bg-amber-950/60 text-amber-300';
-      case 'review':
-        return 'border-blue-500/40 bg-pink-950/60 text-pink-300';
-      default:
-        return 'border-slate-500/40 bg-white/10 text-white/80';
+      case 'deep_work': return 'bg-blue-500/10 border-blue-500/20 text-blue-300';
+      case 'meeting': return 'bg-purple-500/10 border-purple-500/20 text-purple-300';
+      case 'study': return 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300';
+      case 'personal': return 'bg-green-500/10 border-green-500/20 text-green-300';
+      case 'deadline': return 'bg-rose-500/10 border-rose-500/20 text-rose-300';
+      case 'review': return 'bg-orange-500/10 border-orange-500/20 text-orange-300';
+      default: return 'bg-white/10 border-white/20 text-white/80';
     }
+  };
+
+  const getTaskColorBadge = (priority: string) => {
+    if (priority === "high") return "bg-rose-500/10 border border-rose-500/30 text-rose-300";
+    if (priority === "medium") return "bg-amber-500/10 border border-amber-500/30 text-amber-300";
+    return "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300";
+  };
+  const getTaskDotColor = (priority: string) => {
+    if (priority === "high") return "bg-rose-400";
+    if (priority === "medium") return "bg-amber-400";
+    return "bg-emerald-400";
   };
 
   return (
@@ -335,9 +343,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   .map((task) => (
                     <span
                       key={task.id}
-                      className="px-2.5 py-1 rounded-lg bg-blue-950/40 border border-blue-500/30 text-blue-300 text-sm font-medium flex items-center gap-1"
+                      onClick={() => onEditTask?.(task)}
+                      className={`px-2.5 py-1 rounded-lg ${getTaskColorBadge(task.priority)} text-sm font-medium flex items-center gap-1 cursor-pointer hover:brightness-110 transition-all`}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                      <span className={`w-1.5 h-1.5 rounded-full ${getTaskDotColor(task.priority)}`} />
                       {task.title.substring(0, 24)}...
                     </span>
                   ))}
@@ -469,10 +478,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         {matchingTasks.map((t) => (
                           <div
                             key={t.id}
-                            className="p-1 rounded-md bg-blue-950/40 border border-blue-500/30 text-[10px] text-blue-300 flex items-center gap-1 font-medium truncate"
-                            title={`Task Deadline: ${t.title}`}
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
+                              onClick={(e) => { e.stopPropagation(); onEditTask?.(t); }}
+                              className={`p-1 rounded-md ${getTaskColorBadge(t.priority)} text-[10px] flex items-center gap-1 font-medium truncate cursor-pointer hover:brightness-110 transition-all`}
+                              title={`Task Deadline: ${t.title}`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${getTaskDotColor(t.priority)} flex-shrink-0`} />
                             <span className="truncate">{t.title}</span>
                           </div>
                         ))}

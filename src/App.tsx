@@ -515,6 +515,10 @@ export default function App() {
               setEventDefaultDate(defaultDate || getLocalDateString());
               setEventModalOpen(true);
             }}
+            onEditTask={(t) => {
+              setTaskToEdit(t);
+              setTaskModalOpen(true);
+            }}
             onEditEvent={(evt) => {
               setEventToEdit(evt);
               setEventModalOpen(true);
