@@ -591,7 +591,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
           onMouseLeave={handleMouseUp}
           
           onDoubleClick={handleDoubleClick}
-          className="relative w-full h-[640px] md:h-[680px] rounded-3xl bg-white/10 backdrop-blur-2xl border border-white/[0.18] overflow-hidden select-none cursor-grab active:cursor-grabbing shadow-[0_20px_50px_-10px_rgba(0,0,0,0.6),inset_0_1px_1px_0_rgba(255,255,255,0.25)]"
+          className="relative w-full h-[640px] md:h-[680px] rounded-3xl bg-white/10 backdrop-blur-md border border-white/[0.18] overflow-hidden select-none cursor-grab active:cursor-grabbing shadow-[0_20px_50px_-10px_rgba(0,0,0,0.6),inset_0_1px_1px_0_rgba(255,255,255,0.25)]"
         >
           {/* Luminous background refraction mesh */}
           <div className="absolute inset-0 pointer-events-none opacity-40">
@@ -643,7 +643,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                 value={canvasSearch}
                 onChange={(e) => setCanvasSearch(e.target.value)}
                 placeholder="Highlight nodes..."
-                className="w-40 sm:w-52 pl-8 pr-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-2xl border border-white/20 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-400 shadow-lg"
+                className="w-40 sm:w-52 pl-8 pr-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-400 shadow-lg"
               />
               {canvasSearch && (
                 <button
@@ -659,7 +659,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-2.5 py-1.5 rounded-xl bg-white/10 backdrop-blur-2xl border border-white/20 text-sm text-white focus:outline-none cursor-pointer capitalize shadow-lg"
+              className="px-2.5 py-1.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-sm text-white focus:outline-none cursor-pointer capitalize shadow-lg"
             >
               <option value="all">All Types</option>
               <option value="concept">Concept</option>

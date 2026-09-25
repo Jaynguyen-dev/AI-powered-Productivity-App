@@ -50,7 +50,14 @@ const getLocalDateString = () => {
 
 export default function App() {
   // Navigation
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'calendar' | 'tasks' | 'ideas' | 'projects'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'calendar' | 'tasks' | 'ideas' | 'projects'>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab && ['dashboard', 'calendar', 'tasks', 'ideas', 'projects'].includes(tab)) {
+      return tab as any;
+    }
+    return 'dashboard';
+  });
   const [showTutorial, setShowTutorial] = useState(false);
 
   const handleNavigateTab = useCallback((tab: 'dashboard' | 'calendar' | 'tasks' | 'ideas' | 'projects') => {
