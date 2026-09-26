@@ -359,7 +359,58 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
   };
 
   // Double click canvas to create node
-  // Wheel zoom around cursor with passive: false to prevent page scroll
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.target === containerRef.current || (e.target as HTMLElement).tagName === 'svg') {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+    }
+  };
+
+  // Convert screen coordinates to canvas space coordinates
+  const screenToCanvas = useCallback(
+    (clientX: number, clientY: number) => {
+      if (!containerRef.current) return { x: 0, y: 0 };
+      const rect = containerRef.current.getBoundingClientRect();
+      return {
+        x: (clientX - rect.left - pan.x) / zoom,
+        y: (clientY - rect.top - pan.y) / zoom,
+      };
+    },
+    [pan, zoom]
+  );
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const cPos = screenToCanvas(e.clientX, e.clientY);
+    setMouseCanvasPos(cPos);
+
+    if (isPanning) {
+      setPan({
+        x: e.clientX - panStart.x,
+        y: e.clientY - panStart.y,
+      });
+    } else if (draggedNodeId) {
+      setNodePositions((prev) => ({
+        ...prev,
+        [draggedNodeId]: {
+          ...prev[draggedNodeId],
+          x: cPos.x,
+          y: cPos.y,
+          vx: 0,
+          vy: 0,
+        },
+      }));
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsPanning(false);
+    if (draggedNodeId && !layoutFrozen) {
+      reheatSimulation(0.35);
+    }
+    setDraggedNodeId(null);
+  };
+
+  //   // Wheel zoom around cursor with passive: false to prevent page scroll
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
