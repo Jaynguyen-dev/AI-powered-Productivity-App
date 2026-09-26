@@ -359,6 +359,37 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
   };
 
   // Double click canvas to create node
+  // Wheel zoom around cursor with passive: false to prevent page scroll
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const handleNativeWheel = (e) => {
+      e.preventDefault();
+      
+      const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
+      
+      setZoom((prevZoom) => {
+        const newZoom = Math.min(2.5, Math.max(0.35, prevZoom * zoomFactor));
+        
+        setPan((prevPan) => {
+          const rect = container.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          
+          const newPanX = mouseX - ((mouseX - prevPan.x) / prevZoom) * newZoom;
+          const newPanY = mouseY - ((mouseY - prevPan.y) / prevZoom) * newZoom;
+          return { x: newPanX, y: newPanY };
+        });
+        
+        return newZoom;
+      });
+    };
+
+    container.addEventListener("wheel", handleNativeWheel, { passive: false });
+    return () => container.removeEventListener("wheel", handleNativeWheel);
+  }, []);
+
   const handleDoubleClick = (e: React.MouseEvent) => {
     if (e.target === containerRef.current || (e.target as HTMLElement).tagName === 'svg') {
       const { x, y } = screenToCanvas(e.clientX, e.clientY);
