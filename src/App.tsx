@@ -203,7 +203,11 @@ export default function App() {
         const diffMs = due.getTime() - now.getTime();
         const diffHours = diffMs / (1000 * 60 * 60);
         
-        if (diffHours > 0 && diffHours <= 6) {
+        // Identify tasks due within 6 hours that are older than 1 minute
+        const createdTime = new Date(task.createdAt).getTime();
+        const oneMinutePassed = (now.getTime() - createdTime) >= 60000;
+        
+        if (diffHours > 0 && diffHours <= 6 && oneMinutePassed) {
           const title = `Task Due Soon: ${task.title}`;
           const body = `Due in ${Math.round(diffHours * 10) / 10} hours`;
           
