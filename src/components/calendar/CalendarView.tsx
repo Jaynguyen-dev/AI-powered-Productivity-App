@@ -175,13 +175,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const getCategoryColorBadge = (cat: string) => {
     switch (cat) {
-      case 'deep_work': return 'bg-blue-500/10 border-blue-500/20 text-blue-300';
-      case 'meeting': return 'bg-purple-500/10 border-purple-500/20 text-purple-300';
-      case 'study': return 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300';
-      case 'personal': return 'bg-green-500/10 border-green-500/20 text-green-300';
-      case 'deadline': return 'bg-rose-500/10 border-rose-500/20 text-rose-300';
-      case 'review': return 'bg-orange-500/10 border-orange-500/20 text-orange-300';
-      default: return 'bg-white/10 border-white/20 text-white/80';
+      case 'deep_work': return 'bg-blue-400 border-transparent text-slate-900';
+      case 'meeting': return 'bg-purple-400 border-transparent text-slate-900';
+      case 'study': return 'bg-cyan-400 border-transparent text-slate-900';
+      case 'personal': return 'bg-emerald-400 border-transparent text-slate-900';
+      case 'deadline': return 'bg-rose-400 border-transparent text-slate-900';
+      case 'review': return 'bg-amber-400 border-transparent text-slate-900';
+      default: return 'bg-slate-200 border-transparent text-slate-900';
     }
   };
 
@@ -388,12 +388,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     style={{ top: `${startMins}px`, height: `${height}px` }}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="text-sm font-semibold text-white truncate">{evt.title}</h4>
-                      <span className="text-[11px] font-mono text-white/80 opacity-80 flex-shrink-0">
+                      <h4 className="text-sm font-bold truncate">{evt.title}</h4>
+                      <span className="text-[11px] font-mono opacity-80 flex-shrink-0 font-medium">
                         {evt.startTime} - {evt.endTime}
                       </span>
                     </div>
-                    {height >= 45 && evt.description && <p className="text-[11px] text-white/80 mt-1 line-clamp-1 truncate">{evt.description}</p>}
+                    {height >= 45 && evt.description && <p className="text-[11px] mt-1 line-clamp-1 truncate opacity-90 font-medium">{evt.description}</p>}
                   </div>
                 );
             })}
@@ -476,7 +476,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                           }}
                           title={`${evt.title} (${evt.startTime}-${evt.endTime})`}
                         >
-                          <span className="block text-[10px] font-semibold text-white truncate leading-tight">
+                          <span className="block text-[10px] font-bold truncate leading-tight">
                             {evt.title}
                           </span>
                           {height >= 35 && (
@@ -577,7 +577,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         {dayEvents.slice(0, 2).map((e) => (
                           <div
                             key={e.id}
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-medium truncate border ${getCategoryColorBadge(
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-semibold truncate border ${getCategoryColorBadge(
                               e.category
                             )}`}
                           >
