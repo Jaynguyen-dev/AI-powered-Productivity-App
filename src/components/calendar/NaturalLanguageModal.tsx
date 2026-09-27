@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CustomSelect } from '../common/CustomSelect';
 import { CalendarEvent, NaturalLanguageParsingResult, EventRecurrence, EventCategory, Project, Task } from '../../types';
 import { schedulingService } from '../../services/schedulingParser';
 import { Modal } from '../common/Modal';

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CustomSelect } from '../common/CustomSelect';
 import { CalendarEvent, EventRecurrence, EventCategory, Project, Task } from '../../types';
 import { Modal } from '../common/Modal';
 import { Trash2 } from 'lucide-react';
