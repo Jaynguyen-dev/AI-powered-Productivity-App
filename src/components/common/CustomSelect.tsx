@@ -80,9 +80,10 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
         <ChevronDown className={`w-4 h-4 text-white/50 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      <AnimatePresence>
-        {isOpen && typeof document !== 'undefined' && createPortal(
-          <motion.div 
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div 
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -115,9 +116,11 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
                 </button>
               );
             })}
-          </motion.div>
-        , document.body)}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 };
