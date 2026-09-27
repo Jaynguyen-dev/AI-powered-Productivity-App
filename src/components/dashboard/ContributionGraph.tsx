@@ -177,7 +177,7 @@ export const ContributionGraph: React.FC<ContributionGraphProps> = ({ tasks, onS
     
     const iterDate = new Date(start);
     while (iterDate <= today) {
-      const dateStr = iterDate.toISOString().split('T')[0];
+      const dateStr = iterDate.toLocaleDateString('en-CA');
       currentWeek.push({
         date: dateStr,
         count: counts[dateStr] || 0,

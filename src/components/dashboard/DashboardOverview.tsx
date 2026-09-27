@@ -53,7 +53,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   onOpenCopilot,
   onOpenCopilotWithPrompt,
 }) => {
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toLocaleDateString('en-CA');
 
   // Events today
   const todayEvents = events

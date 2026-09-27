@@ -259,9 +259,9 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
       const newEvent: CalendarEvent = {
         id: `event-${Date.now()}`,
         title: payload.title || 'Untitled Event',
-        startDate: payload.startDate || new Date().toISOString().slice(0, 10),
+        startDate: payload.startDate || new Date().toLocaleDateString('en-CA'),
         startTime: payload.startTime || '09:00',
-        endDate: payload.endDate || payload.startDate || new Date().toISOString().slice(0, 10),
+        endDate: payload.endDate || payload.startDate || new Date().toLocaleDateString('en-CA'),
         endTime: payload.endTime || '10:00',
         durationMinutes: payload.durationMinutes || 60,
         category: payload.category || 'meeting',
@@ -479,7 +479,7 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
 
   
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = new Date().toLocaleDateString('en-CA');
   const todayEventsCount = events.filter((e) => e.startDate === todayStr).length;
   const highTasksCount = tasks.filter((t) => t.priority === 'high' && t.status !== 'completed').length;
 

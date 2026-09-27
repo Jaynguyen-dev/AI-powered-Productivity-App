@@ -51,7 +51,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'priority' | 'dueDate' | 'created'>('priority');
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toLocaleDateString('en-CA');
 
   // Compute workload statistics
   const totalTasks = tasks.length;

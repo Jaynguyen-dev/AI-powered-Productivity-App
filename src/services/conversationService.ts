@@ -547,7 +547,7 @@ Answer the user directly and concisely.`;
       if (lower.includes('due tomorrow') || lower.includes('by tomorrow')) {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
-        dueDate = tomorrow.toISOString().slice(0, 10);
+        dueDate = tomorrow.toLocaleDateString('en-CA');
         taskTitle = taskTitle.replace(/\b(due\s+|by\s+)?tomorrow\b/gi, '').trim();
       } else if (lower.includes('due today') || lower.includes('by today')) {
         dueDate = context.currentDate;

@@ -56,7 +56,7 @@ export const EventModal: React.FC<EventModalProps> = ({
       setConnectedProjectId(eventToEdit.connectedProjectId || '');
       setConnectedTaskId(eventToEdit.connectedTaskId || '');
     } else {
-      const todayStr = defaultDate || new Date().toISOString().split('T')[0];
+      const todayStr = defaultDate || new Date().toLocaleDateString('en-CA');
       setTitle('');
       setDescription('');
       setStartDate(todayStr);
