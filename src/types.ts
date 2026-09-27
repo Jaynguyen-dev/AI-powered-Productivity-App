@@ -17,6 +17,7 @@ export interface Task {
   calendarEventId?: string; // Links task to calendar timeblock
   createdAt: string;
   completedAt?: string;
+  notified6Hours?: boolean;
 }
 
 export interface Project {
