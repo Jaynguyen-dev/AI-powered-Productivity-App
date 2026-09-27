@@ -354,45 +354,41 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             )}
           </div>
 
-          {/* Timeline */}
-          <div className="relative min-w-[500px]">
-            {hours.map((hour) => {
-              const hourStr = `${formatZero(hour)}:00`;
-              const dayEvents = filteredEvents.filter(
-                (e) => e.startDate === formatDateString(currentDate) && parseInt(e.startTime.split(':')[0], 10) === hour
-              );
-
-              return (
-                <div key={hour} className={`flex items-start ${hour === 0 ? "" : "border-t border-white/40"} py-3 group hover:bg-white/[0.02] transition-colors`}>
-                  <span className="w-16 text-sm text-white/60 font-mono flex-shrink-0 select-none">
-                    {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
-                  </span>
-                  <div className="flex-1 min-h-[44px] flex flex-wrap gap-2">
-                    {dayEvents.map((evt) => (
-                      <div
-                        key={evt.id}
-                        onClick={() => onEditEvent(evt)}
-                        className={`p-2.5 rounded-xl border ${getCategoryColorBadge(
-                          evt.category
-                        )} shadow-md backdrop-blur-md cursor-pointer hover:brightness-110 transition-all flex-1 min-w-[200px]`}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <h4 className="text-sm font-semibold text-white">{evt.title}</h4>
-                          <span className="text-[11px] font-mono text-white/80 opacity-80">
-                            {evt.startTime} – {evt.endTime}
-                          </span>
-                        </div>
-                        {evt.description && <p className="text-[11px] text-white/80 mt-1 line-clamp-1">{evt.description}</p>}
-                        {evt.sourceText && (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-blue-300/80 mt-1">
-                            <Sparkles className="w-2.5 h-2.5" /> NLP scheduled
-                          </span>
-                        )}
-                      </div>
-                    ))}
+          {/* Absolute Timeline */}
+          <div className="relative min-w-[500px] h-[1440px] mt-4 mb-8 bg-white/[0.02] rounded-xl border border-white/10">
+            {hours.map((hour) => (
+              <div key={hour} className="absolute w-full flex items-start border-t border-white/10 pointer-events-none" style={{ top: `${hour * 60}px`, height: '60px' }}>
+                <span className="w-16 -mt-3 text-[11px] text-white/40 font-mono flex-shrink-0 select-none pl-2 bg-slate-900">
+                  {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '12 AM' : `${hour} AM`}
+                </span>
+              </div>
+            ))}
+            
+            {filteredEvents
+              .filter((e) => e.startDate === formatDateString(currentDate))
+              .map((evt) => {
+                const startMins = parseTimeToMins(evt.startTime);
+                const endMins = parseTimeToMins(evt.endTime);
+                const height = Math.max(endMins - startMins, 25);
+                
+                return (
+                  <div
+                    key={evt.id}
+                    onClick={() => onEditEvent(evt)}
+                    className={`absolute left-16 right-4 rounded-xl border ${getCategoryColorBadge(
+                      evt.category
+                    )} shadow-md backdrop-blur-md cursor-pointer hover:brightness-110 transition-all p-2 overflow-hidden`}
+                    style={{ top: `${startMins}px`, height: `${height}px` }}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <h4 className="text-sm font-semibold text-white truncate">{evt.title}</h4>
+                      <span className="text-[11px] font-mono text-white/80 opacity-80 flex-shrink-0">
+                        {evt.startTime} - {evt.endTime}
+                      </span>
+                    </div>
+                    {height >= 45 && evt.description && <p className="text-[11px] text-white/80 mt-1 line-clamp-1 truncate">{evt.description}</p>}
                   </div>
-                </div>
-              );
+                );
             })}
           </div>
         </GlassCard>
