@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Task, PriorityLevel, TaskStatus, Project, IdeaNode } from '../../types';
 import { Modal } from '../common/Modal';
 import { PriorityBadge } from '../common/PriorityBadge';
+import { CustomDatePicker, CustomTimePicker } from '../common/DateTimePicker';
 import { Calendar, Clock, Lightbulb, Folder, Tag, Sparkles } from 'lucide-react';
 
 interface TaskModalProps {
@@ -148,24 +149,14 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               <Calendar className="w-3.5 h-3.5 text-blue-500" />
               Due Date
             </label>
-            <input
-              type="date" min={new Date().toLocaleDateString("en-CA")}
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            />
+            <CustomDatePicker value={dueDate} onChange={setDueDate} />
           </div>
           <div>
             <label className="block text-sm font-medium text-white/80 mb-1 flex items-center gap-1">
               <Clock className="w-3.5 h-3.5 text-blue-500" />
               Due Time (Optional)
             </label>
-            <input
-              type="time"
-              value={dueTime}
-              onChange={(e) => setDueTime(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            />
+            <CustomTimePicker value={dueTime} onChange={setDueTime} />
           </div>
         </div>
 
