@@ -184,32 +184,32 @@ export const EventModal: React.FC<EventModalProps> = ({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-white/80 mb-1">Recurrence</label>
-            <select
-              value={recurrence}
-              onChange={(e) => setRecurrence(e.target.value as EventRecurrence)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            >
-              <option value="none">Does not repeat</option>
-              <option value="daily">Daily</option>
-              <option value="weekdays">Every Weekday (Mon-Fri)</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
+            <CustomSelect 
+              value={recurrence} 
+              onChange={(val) => setRecurrence(val as any)}
+              options={[
+                { value: 'none', label: 'Does not repeat', icon: <Repeat className="w-4 h-4 opacity-50" /> },
+                { value: 'daily', label: 'Daily', icon: <CalendarIcon className="w-4 h-4" /> },
+                { value: 'weekdays', label: 'Every Weekday (Mon-Fri)', icon: <CalendarIcon className="w-4 h-4" /> },
+                { value: 'weekly', label: 'Weekly', icon: <CalendarIcon className="w-4 h-4" /> },
+                { value: 'monthly', label: 'Monthly', icon: <CalendarIcon className="w-4 h-4" /> }
+              ]}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-white/80 mb-1">Associate Project</label>
-            <select
-              value={connectedProjectId}
-              onChange={(e) => setConnectedProjectId(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            >
-              <option value="">None (Independent)</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
+            <CustomSelect 
+              value={connectedProjectId} 
+              onChange={setConnectedProjectId}
+              options={[
+                { value: '', label: 'None (Independent)', icon: <Hash className="w-4 h-4 opacity-50" /> },
+                ...projects.map(p => ({
+                  value: p.id,
+                  label: p.name,
+                  icon: <Briefcase className="w-4 h-4 text-blue-400" />
+                }))
+              ]}
+            />
           </div>
         </div>
 

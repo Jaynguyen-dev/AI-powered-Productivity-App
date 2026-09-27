@@ -169,18 +169,18 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               <Folder className="w-3.5 h-3.5 text-blue-500" />
               Project / Category
             </label>
-            <select
-              value={projectId}
-              onChange={(e) => setProjectId(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            >
-              <option value="">No Project (General)</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
+            <CustomSelect 
+              value={projectId} 
+              onChange={setProjectId}
+              options={[
+                { value: '', label: 'No Project (General)', icon: <Hash className="w-4 h-4 opacity-50" /> },
+                ...projects.map(p => ({
+                  value: p.id,
+                  label: p.name,
+                  icon: <Briefcase className="w-4 h-4 text-blue-400" />
+                }))
+              ]}
+            />
           </div>
 
           <div>
@@ -188,18 +188,18 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
               Sparked by Idea
             </label>
-            <select
-              value={originatingIdeaId}
-              onChange={(e) => setOriginatingIdeaId(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            >
-              <option value="">None (Independent Task)</option>
-              {ideas.map((idea) => (
-                <option key={idea.id} value={idea.id}>
-                  {idea.title.substring(0, 32)}...
-                </option>
-              ))}
-            </select>
+            <CustomSelect 
+              value={originatingIdeaId} 
+              onChange={setOriginatingIdeaId}
+              options={[
+                { value: '', label: 'None (Independent Task)', icon: <Hash className="w-4 h-4 opacity-50" /> },
+                ...ideas.map(idea => ({
+                  value: idea.id,
+                  label: idea.title.length > 32 ? idea.title.substring(0, 32) + '...' : idea.title,
+                  icon: <Lightbulb className="w-4 h-4 text-amber-400" />
+                }))
+              ]}
+            />
           </div>
         </div>
 

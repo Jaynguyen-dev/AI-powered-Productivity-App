@@ -3,7 +3,7 @@ import { CustomSelect } from '../common/CustomSelect';
 import { CalendarEvent, NaturalLanguageParsingResult, EventRecurrence, EventCategory, Project, Task } from '../../types';
 import { schedulingService } from '../../services/schedulingParser';
 import { Modal } from '../common/Modal';
-import { Sparkles, Calendar, Hash, Briefcase, Clock, AlertTriangle, CheckCircle2, RotateCw, Tag, ArrowRight } from 'lucide-react';
+import { Sparkles, Calendar, Hash, Briefcase, CheckSquare, Clock, AlertTriangle, CheckCircle2, RotateCw, Tag, ArrowRight } from 'lucide-react';
 
 interface NaturalLanguageModalProps {
   isOpen: boolean;
@@ -367,18 +367,18 @@ export const NaturalLanguageModal: React.FC<NaturalLanguageModalProps> = ({
               {projects.length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-white/80 mb-1">Associate Project</label>
-                  <select
-                    value={connectedProjectId}
-                    onChange={(e) => setConnectedProjectId(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-                  >
-                    <option value="">None (Independent)</option>
-                    {projects.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
+                  <CustomSelect 
+                  value={connectedProjectId} 
+                  onChange={setConnectedProjectId}
+                  options={[
+                    { value: '', label: 'None (Independent)', icon: <Hash className="w-4 h-4 opacity-50" /> },
+                    ...projects.map(p => ({
+                      value: p.id,
+                      label: p.name,
+                      icon: <Briefcase className="w-4 h-4 text-blue-400" />
+                    }))
+                  ]}
+                />
                 </div>
               )}
 
@@ -386,20 +386,18 @@ export const NaturalLanguageModal: React.FC<NaturalLanguageModalProps> = ({
               {tasks.length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-white/80 mb-1">Timeblock for Task</label>
-                  <select
-                    value={connectedTaskId}
-                    onChange={(e) => setConnectedTaskId(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-                  >
-                    <option value="">None (Standalone Event)</option>
-                    {tasks
-                      .filter((t) => t.status !== 'completed')
-                      .map((t) => (
-                        <option key={t.id} value={t.id}>
-                          {t.title.substring(0, 38)}...
-                        </option>
-                      ))}
-                  </select>
+                  <CustomSelect 
+                    value={connectedTaskId} 
+                    onChange={setConnectedTaskId}
+                    options={[
+                      { value: '', label: 'None (Standalone Event)', icon: <Hash className="w-4 h-4 opacity-50" /> },
+                      ...tasks.filter(t => t.status !== 'completed').map(t => ({
+                        value: t.id,
+                        label: t.title.length > 38 ? t.title.substring(0, 38) + '...' : t.title,
+                        icon: <CheckSquare className="w-4 h-4 text-emerald-400" />
+                      }))
+                    ]}
+                  />
                 </div>
               )}
             </div>
