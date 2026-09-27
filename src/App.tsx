@@ -211,22 +211,29 @@ export default function App() {
           const title = `Task Due Soon: ${task.title}`;
           const body = `Due in ${Math.round(diffHours * 10) / 10} hours`;
           
-          // Play notification sound
+          // Play a prominent double-beep notification sound
           try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (AudioContext) {
               const ctx = new AudioContext();
-              const osc = ctx.createOscillator();
-              const gain = ctx.createGain();
-              osc.type = 'sine';
-              osc.frequency.setValueAtTime(880, ctx.currentTime);
-              osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
-              gain.gain.setValueAtTime(0.1, ctx.currentTime);
-              gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-              osc.connect(gain);
-              gain.connect(ctx.destination);
-              osc.start();
-              osc.stop(ctx.currentTime + 0.5);
+              if (ctx.state === 'suspended') ctx.resume();
+              
+              const playBeep = (startTime) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(880, startTime);
+                osc.frequency.exponentialRampToValueAtTime(1760, startTime + 0.1);
+                gain.gain.setValueAtTime(0.4, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.3);
+              };
+              
+              playBeep(ctx.currentTime);
+              playBeep(ctx.currentTime + 0.15); // Double beep
             }
           } catch (e) {
             console.error('Audio playback failed', e);
@@ -255,7 +262,7 @@ export default function App() {
     };
 
     checkTasks();
-    const interval = setInterval(checkTasks, 60000); // every minute
+    const interval = setInterval(checkTasks, 5000); // Check every 5 seconds for precision
     return () => clearInterval(interval);
   }, [addToast, refreshAll]);
 
