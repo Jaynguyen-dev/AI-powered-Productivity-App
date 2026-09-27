@@ -173,15 +173,27 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     return h * 60 + (m || 0);
   };
 
+  const getMonthCategoryBadge = (cat: string) => {
+    switch (cat) {
+      case 'deep_work': return 'bg-blue-950/80 border-blue-800/50 text-blue-300';
+      case 'meeting': return 'bg-purple-950/80 border-purple-800/50 text-purple-300';
+      case 'study': return 'bg-cyan-950/80 border-cyan-800/50 text-cyan-300';
+      case 'personal': return 'bg-emerald-950/80 border-emerald-800/50 text-emerald-300';
+      case 'deadline': return 'bg-rose-950/80 border-rose-800/50 text-rose-300';
+      case 'review': return 'bg-amber-950/80 border-amber-800/50 text-amber-300';
+      default: return 'bg-slate-800/80 border-slate-600/50 text-slate-300';
+    }
+  };
+
   const getCategoryColorBadge = (cat: string) => {
     switch (cat) {
-      case 'deep_work': return 'bg-blue-400 border-transparent text-slate-900';
-      case 'meeting': return 'bg-purple-400 border-transparent text-slate-900';
-      case 'study': return 'bg-cyan-400 border-transparent text-slate-900';
-      case 'personal': return 'bg-emerald-400 border-transparent text-slate-900';
-      case 'deadline': return 'bg-rose-400 border-transparent text-slate-900';
-      case 'review': return 'bg-amber-400 border-transparent text-slate-900';
-      default: return 'bg-slate-200 border-transparent text-slate-900';
+      case 'deep_work': return 'bg-blue-500/10 border-blue-500/20 text-blue-300';
+      case 'meeting': return 'bg-purple-500/10 border-purple-500/20 text-purple-300';
+      case 'study': return 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300';
+      case 'personal': return 'bg-green-500/10 border-green-500/20 text-green-300';
+      case 'deadline': return 'bg-rose-500/10 border-rose-500/20 text-rose-300';
+      case 'review': return 'bg-orange-500/10 border-orange-500/20 text-orange-300';
+      default: return 'bg-white/10 border-white/20 text-white/80';
     }
   };
 
@@ -388,12 +400,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     style={{ top: `${startMins}px`, height: `${height}px` }}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="text-sm font-bold truncate">{evt.title}</h4>
-                      <span className="text-[11px] font-mono opacity-80 flex-shrink-0 font-medium">
+                      <h4 className="text-sm font-semibold text-white truncate">{evt.title}</h4>
+                      <span className="text-[11px] font-mono text-white/80 opacity-80 flex-shrink-0">
                         {evt.startTime} - {evt.endTime}
                       </span>
                     </div>
-                    {height >= 45 && evt.description && <p className="text-[11px] mt-1 line-clamp-1 truncate opacity-90 font-medium">{evt.description}</p>}
+                    {height >= 45 && evt.description && <p className="text-[11px] text-white/80 mt-1 line-clamp-1 truncate">{evt.description}</p>}
                   </div>
                 );
             })}
@@ -476,7 +488,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                           }}
                           title={`${evt.title} (${evt.startTime}-${evt.endTime})`}
                         >
-                          <span className="block text-[10px] font-bold truncate leading-tight">
+                          <span className="block text-[10px] font-semibold text-white truncate leading-tight">
                             {evt.title}
                           </span>
                           {height >= 35 && (
@@ -546,12 +558,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         setCurrentDate(dateObj);
                         setViewMode('day');
                       }}
-                      className={`min-h-[90px] sm:min-h-[110px] p-1.5 sm:p-2 rounded-xl border flex flex-col justify-between transition-all cursor-pointer ${
+                      className={`min-h-[90px] sm:min-h-[110px] p-1.5 sm:p-2 rounded-[16px] border flex flex-col justify-between transition-all cursor-pointer ${
                         isToday
                           ? 'bg-blue-950/40 border-blue-500/50 shadow-md ring-1 ring-blue-500/30'
                           : isCurrentMonth
-                          ? 'bg-white/60 border-white/40 hover:bg-white/[0.04]'
-                          : 'bg-white/10 border-transparent opacity-40 hover:opacity-70'
+                          ? 'bg-white/[0.03] border-white/10 hover:bg-white/[0.08]'
+                          : 'bg-white/[0.01] border-white/5 opacity-40 hover:opacity-60'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -577,7 +589,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         {dayEvents.slice(0, 2).map((e) => (
                           <div
                             key={e.id}
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-semibold truncate border ${getCategoryColorBadge(
+                            className={`px-1.5 py-0.5 rounded-md text-[10px] font-semibold truncate border ${getMonthCategoryBadge(
                               e.category
                             )}`}
                           >
