@@ -213,12 +213,12 @@ export default function App() {
           
           // Play a prominent double-beep notification sound
           try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
             if (AudioContext) {
               const ctx = new AudioContext();
               if (ctx.state === 'suspended') ctx.resume();
               
-              const playBeep = (startTime) => {
+              const playBeep = (startTime: number) => {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = 'triangle';
