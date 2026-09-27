@@ -363,10 +363,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           {/* Absolute Timeline */}
           <div className="relative min-w-[500px] h-[1440px] mt-4 mb-8 bg-white/[0.02] rounded-xl border border-white/10">
             {hours.map((hour) => (
-              <div key={hour} className="absolute w-full flex items-start border-t border-white/10 pointer-events-none" style={{ top: `${hour * 60}px`, height: '60px' }}>
-                <span className="w-16 -mt-3 text-[11px] text-white/40 font-mono flex-shrink-0 select-none pl-2 bg-slate-900">
+              <div key={hour} className="absolute w-full flex items-center pointer-events-none" style={{ top: `${hour * 60}px`, height: '0px', marginTop: '-6px' }}>
+                <span className="w-16 text-[11px] text-white/40 font-mono flex-shrink-0 select-none pl-2 leading-none">
                   {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '12 AM' : `${hour} AM`}
                 </span>
+                <div className="flex-1 border-t border-white/10"></div>
               </div>
             ))}
             
