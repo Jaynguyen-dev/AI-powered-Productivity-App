@@ -433,68 +433,85 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 );
               })}
             </div>
+            </div>
 
-            {/* Week Grid Rows */}
-            <div className="space-y-1 pt-2">
+            {/* Week Grid Rows - Absolute Timeline */}
+            <div className="relative h-[1440px] mt-4 mb-4 bg-white/[0.01] rounded-xl border border-white/5">
+              {/* Background grid lines and labels */}
               {hours.map((hour) => (
-                <div key={hour} className={`grid grid-cols-8 gap-2 ${hour === 0 ? "" : "border-t border-white/40"} py-2 items-start min-h-[50px]`}>
-                  <span className="text-[11px] text-white/60 font-mono select-none pt-1">
-                    {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
+                <div key={hour} className="absolute w-full flex items-center pointer-events-none" style={{ top: `${hour * 60}px`, height: '0px', marginTop: '-6px' }}>
+                  <span className="w-[12.5%] text-[10px] text-white/40 font-mono flex-shrink-0 select-none text-center leading-none">
+                    {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '12 AM' : `${hour} AM`}
                   </span>
-
-                  {weekDays.map((d, dayIdx) => {
-                    const dateStr = formatDateString(d);
-                    const matchingEvents = filteredEvents.filter(
-                      (e) => e.startDate === dateStr && parseInt(e.startTime.split(':')[0], 10) === hour
-                    );
-
-                    // Tasks due in this hour or day
-                    const matchingTasks = showTaskDeadlines
-                      ? tasks.filter(
-                          (t) =>
-                            t.dueDate === dateStr &&
-                            t.status !== 'completed' &&
-                            (t.dueTime ? parseInt(t.dueTime.split(':')[0], 10) === hour : hour === 17)
-                        )
-                      : [];
-
-                    return (
-                      <div key={dayIdx} className="min-h-[38px] flex flex-col gap-1">
-                        {matchingEvents.map((evt) => (
-                          <div
-                            key={evt.id}
-                            onClick={() => onEditEvent(evt)}
-                            className={`p-1.5 rounded-lg border text-left cursor-pointer transition-all hover:scale-[1.02] ${getCategoryColorBadge(
-                              evt.category
-                            )}`}
-                            title={`${evt.title} (${evt.startTime}-${evt.endTime})`}
-                          >
-                            <span className="block text-[11px] font-semibold text-white truncate leading-tight">
-                              {evt.title}
-                            </span>
-                            <span className="block text-[9px] font-mono opacity-80 mt-0.5">
-                              {evt.startTime}
-                            </span>
-                          </div>
-                        ))}
-
-                        {matchingTasks.map((t) => (
-                          <div
-                            key={t.id}
-                              onClick={(e) => { e.stopPropagation(); onEditTask?.(t); }}
-                              className={`p-1 rounded-md ${getTaskColorBadge(t.priority)} text-[10px] flex items-center gap-1 font-medium truncate cursor-pointer hover:brightness-110 transition-all`}
-                              title={`Task Deadline: ${t.title}`}
-                            >
-                              <span className={`w-1.5 h-1.5 rounded-full ${getTaskDotColor(t.priority)} flex-shrink-0`} />
-                            <span className="truncate">{t.title}</span>
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  })}
+                  <div className="flex-1 border-t border-white/10"></div>
                 </div>
               ))}
-            </div>
+
+              {/* Events and Tasks mapped absolutely */}
+              {weekDays.map((d, dayIdx) => {
+                const dateStr = formatDateString(d);
+                const matchingEvents = filteredEvents.filter(e => e.startDate === dateStr);
+                const matchingTasks = showTaskDeadlines ? tasks.filter(t => t.dueDate === dateStr && t.status !== 'completed') : [];
+                
+                const leftPercent = 12.5 + (dayIdx * 12.5);
+
+                return (
+                  <React.Fragment key={dayIdx}>
+                    {/* Events */}
+                    {matchingEvents.map((evt) => {
+                      const startMins = parseTimeToMins(evt.startTime);
+                      const endMins = parseTimeToMins(evt.endTime);
+                      const height = Math.max(endMins - startMins, 20);
+
+                      return (
+                        <div
+                          key={evt.id}
+                          onClick={() => onEditEvent(evt)}
+                          className={`absolute p-1.5 rounded-lg border cursor-pointer hover:scale-[1.02] transition-all overflow-hidden shadow-md backdrop-blur-md ${getCategoryColorBadge(evt.category)}`}
+                          style={{ 
+                            top: `${startMins}px`, 
+                            height: `${height}px`,
+                            left: `calc(${leftPercent}% + 4px)`,
+                            width: `calc(12.5% - 8px)`
+                          }}
+                          title={`${evt.title} (${evt.startTime}-${evt.endTime})`}
+                        >
+                          <span className="block text-[10px] font-semibold text-white truncate leading-tight">
+                            {evt.title}
+                          </span>
+                          {height >= 35 && (
+                             <span className="block text-[9px] font-mono opacity-80 mt-0.5 truncate">
+                               {evt.startTime} - {evt.endTime}
+                             </span>
+                           )}
+                        </div>
+                      );
+                    })}
+                    
+                    {/* Tasks */}
+                    {matchingTasks.map((t, tIdx) => {
+                      const startMins = t.dueTime ? parseTimeToMins(t.dueTime) : (17 * 60 + (tIdx * 25)); // Default to 5 PM if no time
+                      return (
+                        <div
+                          key={t.id}
+                          onClick={(e) => { e.stopPropagation(); onEditTask?.(t); }}
+                          className={`absolute p-1 rounded-md ${getTaskColorBadge(t.priority)} text-[9px] flex items-center gap-1 font-medium truncate cursor-pointer hover:brightness-110 transition-all shadow-md z-10`}
+                          style={{ 
+                            top: `${startMins}px`, 
+                            height: '22px',
+                            left: `calc(${leftPercent}% + 8px)`,
+                            width: `calc(12.5% - 16px)`
+                          }}
+                          title={`Task Deadline: ${t.title}`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${getTaskDotColor(t.priority)} flex-shrink-0`} />
+                          <span className="truncate">{t.title}</span>
+                        </div>
+                      );
+                    })}
+                  </React.Fragment>
+                );
+              })}
           </div>
         </GlassCard>
       )}
