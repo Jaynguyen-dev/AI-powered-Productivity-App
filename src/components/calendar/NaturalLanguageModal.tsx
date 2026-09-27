@@ -267,30 +267,22 @@ export const NaturalLanguageModal: React.FC<NaturalLanguageModalProps> = ({
                   <Tag className="w-3.5 h-3.5 text-blue-500" />
                   Category
                 </label>
-                <select
-                  value={category}
-                  onChange={(e) => {
-                    const cat = e.target.value as EventCategory;
+                <CustomSelect 
+                  value={category} 
+                  onChange={(val) => {
+                    const cat = val as any;
                     setCategory(cat);
-                    const colorMap: Record<EventCategory, string> = {
-                      meeting: '#6366f1',
-                      deep_work: '#06b6d4',
-                      study: '#10b981',
-                      personal: '#f59e0b',
+                    const colorMap: any = {
+                      meeting: '#a855f7',
+                      deep_work: '#3b82f6',
+                      study: '#06b6d4',
+                      personal: '#10b981',
                       review: '#ec4899',
                       deadline: '#ef4444',
                     };
                     setColor(colorMap[cat]);
-                  }}
-                  className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                >
-                  <option value="meeting">Meeting / Sync</option>
-                  <option value="deep_work">Deep Work / Focus</option>
-                  <option value="study">Study / Research</option>
-                  <option value="personal">Personal / Wellness</option>
-                  <option value="review">Review / Critique</option>
-                  <option value="deadline">Milestone / Deadline</option>
-                </select>
+                  }} 
+                />
               </div>
 
               {/* Start Time */}
