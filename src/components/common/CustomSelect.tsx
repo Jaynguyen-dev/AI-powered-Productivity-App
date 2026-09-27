@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Users, Brain, BookOpen, Heart, Eye, Flag, Circle } from 'lucide-react';
 
@@ -43,6 +44,7 @@ interface CustomSelectProps {
 }
 
 export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSelectProps) => {
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +64,13 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
     <div className="relative" ref={containerRef}>
       <button 
         type="button" 
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          if (!isOpen && containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
+            setCoords({ top: rect.bottom, left: rect.left, width: rect.width });
+          }
+          setIsOpen(!isOpen);
+        }}
         className="w-full px-3 py-2.5 rounded-xl bg-black/20 border border-white/10 text-white text-sm focus:outline-none flex items-center justify-between hover:bg-white/5 transition-colors shadow-inner"
       >
         <span className={`flex items-center gap-2 ${color}`}>
@@ -73,13 +81,14 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
       </button>
 
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && typeof document !== 'undefined' && createPortal(
           <motion.div 
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-50 top-full mt-2 left-0 w-full p-1.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-0.5 overflow-hidden"
+            className="fixed z-[9999] mt-2 p-1.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-1 max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+            style={{ top: coords.top, left: coords.left, width: coords.width }}
           >
             {options.map((opt) => {
               const OptIcon = opt.icon || iconMap[opt.value] || <Circle className="w-4 h-4" />;
@@ -107,7 +116,7 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
               );
             })}
           </motion.div>
-        )}
+        , document.body)}
       </AnimatePresence>
     </div>
   );
