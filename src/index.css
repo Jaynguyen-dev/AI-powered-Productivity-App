@@ -6,6 +6,13 @@
     --zen-accent: #2563eb; /* Orange accent from the reference */
   }
 
+
+  option {
+    background-color: #0f172a;
+    color: #ffffff;
+    text-shadow: none;
+  }
+
   body {
     font-family: 'Quicksand', system-ui, -apple-system, sans-serif;
     color-scheme: dark;

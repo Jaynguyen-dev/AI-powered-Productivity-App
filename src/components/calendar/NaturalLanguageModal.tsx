@@ -3,7 +3,7 @@ import { CustomSelect } from '../common/CustomSelect';
 import { CalendarEvent, NaturalLanguageParsingResult, EventRecurrence, EventCategory, Project, Task } from '../../types';
 import { schedulingService } from '../../services/schedulingParser';
 import { Modal } from '../common/Modal';
-import { Sparkles, Calendar, Clock, AlertTriangle, CheckCircle2, RotateCw, Tag, ArrowRight } from 'lucide-react';
+import { Sparkles, Calendar, Hash, Briefcase, Clock, AlertTriangle, CheckCircle2, RotateCw, Tag, ArrowRight } from 'lucide-react';
 
 interface NaturalLanguageModalProps {
   isOpen: boolean;

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { CustomSelect } from '../common/CustomSelect';
+import { Hash, Briefcase } from 'lucide-react';
 import { Task, PriorityLevel, TaskStatus, Project, IdeaNode } from '../../types';
 import { Modal } from '../common/Modal';
 import { PriorityBadge } from '../common/PriorityBadge';
