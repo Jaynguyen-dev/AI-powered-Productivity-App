@@ -47,12 +47,15 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       setEstimatedMinutes(taskToEdit.estimatedMinutes || 60);
       setOriginatingIdeaId(taskToEdit.originatingIdeaId || '');
     } else {
-      setTitle('');
+            setTitle('');
       setDescription('');
       setPriority('medium');
       setStatus('todo');
-      setDueDate('2026-09-20');
-      setDueTime('17:00');
+      
+      const now = new Date();
+      const pad = (n) => n.toString().padStart(2, '0');
+      setDueDate(`${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`);
+      setDueTime(`${pad(now.getHours())}:${pad(now.getMinutes())}`);
       setProjectId(projects[0]?.id || '');
       setTagsInput('');
       setEstimatedMinutes(60);

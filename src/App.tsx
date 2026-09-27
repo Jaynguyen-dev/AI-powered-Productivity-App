@@ -207,6 +207,27 @@ export default function App() {
           const title = `Task Due Soon: ${task.title}`;
           const body = `Due in ${Math.round(diffHours * 10) / 10} hours`;
           
+          // Play notification sound
+          try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) {
+              const ctx = new AudioContext();
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(880, ctx.currentTime);
+              osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
+              gain.gain.setValueAtTime(0.1, ctx.currentTime);
+              gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start();
+              osc.stop(ctx.currentTime + 0.5);
+            }
+          } catch (e) {
+            console.error('Audio playback failed', e);
+          }
+
           if ('Notification' in window && Notification.permission === 'granted') {
             new Notification(title, { body });
           } else {
