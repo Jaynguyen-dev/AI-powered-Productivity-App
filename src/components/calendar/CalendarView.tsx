@@ -167,6 +167,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   // Hours array for Day and Week grid (0:00 to 23:00)
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
+  const parseTimeToMins = (tStr: string) => {
+    if (!tStr) return 0;
+    const [h, m] = tStr.split(':').map(Number);
+    return h * 60 + (m || 0);
+  };
+
   const getCategoryColorBadge = (cat: string) => {
     switch (cat) {
       case 'deep_work': return 'bg-blue-500/10 border-blue-500/20 text-blue-300';
