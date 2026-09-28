@@ -379,25 +379,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 <span className="w-16 text-[11px] text-white/40 font-mono flex-shrink-0 select-none pl-2 leading-none">
                   {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '' : `${hour} AM`}
                 </span>
-                <div className="flex-1 border-t border-white/10"></div>
+                {hour !== 0 && <div className="flex-1 border-t border-white/10"></div>}
               </div>
             ))}
             
-            {filteredEvents
-              .filter((e) => e.startDate === formatDateString(currentDate))
-              .map((evt) => {
-                const startMins = parseTimeToMins(evt.startTime);
-                const endMins = parseTimeToMins(evt.endTime);
-                const height = Math.max(endMins - startMins, 25);
+            {filteredEvents.flatMap(evt => getEventSegmentsForDate(evt, formatDateString(currentDate)).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }))).map((evt) => { const height = Math.max(evt.eMins - evt.sMins, 25);
                 
                 return (
                   <div
-                    key={evt.id}
-                    onClick={() => onEditEvent(evt)}
+                    key={`${evt.id}-${evt.segIdx}`} onClick={() => onEditEvent(evt)}
                     className={`absolute left-16 right-4 rounded-xl border ${getCategoryColorBadge(
                       evt.category
                     )} shadow-md backdrop-blur-md cursor-pointer hover:brightness-110 transition-all p-2 overflow-hidden`}
-                    style={{ top: `${startMins}px`, height: `${height}px` }}
+                    style={{ top: `${evt.sMins}px`, height: `${height}px` }}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <h4 className="text-sm font-semibold text-white truncate">{evt.title}</h4>
@@ -455,7 +449,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   <span className="w-[12.5%] text-[10px] text-white/40 font-mono flex-shrink-0 select-none text-center leading-none">
                     {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '' : `${hour} AM`}
                   </span>
-                  <div className="flex-1 border-t border-white/10"></div>
+                  {hour !== 0 && <div className="flex-1 border-t border-white/10"></div>}
                 </div>
               ))}
 
@@ -470,18 +464,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 return (
                   <React.Fragment key={dayIdx}>
                     {/* Events */}
-                    {matchingEvents.map((evt) => {
-                      const startMins = parseTimeToMins(evt.startTime);
-                      const endMins = parseTimeToMins(evt.endTime);
-                      const height = Math.max(endMins - startMins, 20);
+                    {filteredEvents.flatMap(evt => getEventSegmentsForDate(evt, dateStr).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }))).map((evt) => { const height = Math.max(evt.eMins - evt.sMins, 20);
 
                       return (
                         <div
-                          key={evt.id}
-                          onClick={() => onEditEvent(evt)}
+                          key={`${evt.id}-${evt.segIdx}`} onClick={() => onEditEvent(evt)}
                           className={`absolute p-1.5 rounded-lg border cursor-pointer hover:scale-[1.02] transition-all overflow-hidden shadow-md backdrop-blur-md ${getCategoryColorBadge(evt.category)}`}
                           style={{ 
-                            top: `${startMins}px`, 
+                            top: `${evt.sMins}px`, 
                             height: `${height}px`,
                             left: `calc(${leftPercent}% + 4px)`,
                             width: `calc(12.5% - 8px)`
@@ -509,8 +499,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                           onClick={(e) => { e.stopPropagation(); onEditTask?.(t); }}
                           className={`absolute p-1 rounded-md ${getTaskColorBadge(t.priority)} text-[9px] flex items-center gap-1 font-medium truncate cursor-pointer hover:brightness-110 transition-all shadow-md z-10`}
                           style={{ 
-                            top: `${startMins}px`, 
-                            height: '22px',
+                            top: `${startMins}px`,
+ height: '22px',
                             left: `calc(${leftPercent}% + 8px)`,
                             width: `calc(12.5% - 16px)`
                           }}
@@ -612,4 +602,37 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       )}
     </div>
   );
+};
+
+
+export const parseTimeToMinsHelper = (tStr: string) => {
+  if (!tStr) return 0;
+  const [h, m] = tStr.split(':').map(Number);
+  return h * 60 + (m || 0);
+};
+
+export const getEventSegmentsForDate = (evt: any, dateStr: string) => {
+  const startMins = parseTimeToMinsHelper(evt.startTime);
+  const endMins = parseTimeToMinsHelper(evt.endTime);
+  const crossesMidnight = endMins < startMins;
+  
+  const [y, m, d] = evt.startDate.split('-').map(Number);
+  const startD = new Date(y, m - 1, d);
+  startD.setDate(startD.getDate() + 1);
+  const yStr = startD.getFullYear();
+  const mStr = String(startD.getMonth() + 1).padStart(2, '0');
+  const dStr = String(startD.getDate()).padStart(2, '0');
+  const nextDateStr = `${yStr}-${mStr}-${dStr}`;
+
+  if (evt.startDate === dateStr) {
+    if (crossesMidnight) return [{ sMins: startMins, eMins: 1440 }];
+    return [{ sMins: startMins, eMins: endMins }];
+  } else if (crossesMidnight && nextDateStr === dateStr) {
+    return [{ sMins: 0, eMins: endMins }];
+  } else if (evt.endDate === dateStr && evt.endDate !== evt.startDate) {
+    return [{ sMins: 0, eMins: endMins }];
+  } else if (evt.endDate && dateStr > evt.startDate && dateStr < evt.endDate) {
+    return [{ sMins: 0, eMins: 1440 }];
+  }
+  return [];
 };
