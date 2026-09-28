@@ -24,7 +24,7 @@ export const EventModal: React.FC<EventModalProps> = ({
   onDelete,
   eventToEdit,
   defaultDate,
-  defaultTime = '10:00',
+  defaultTime,
   projects,
   tasks,
 }) => {
