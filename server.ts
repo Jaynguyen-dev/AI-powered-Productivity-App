@@ -94,7 +94,7 @@ You MUST respond with a valid JSON object strictly matching this schema:
 Guidelines:
 1. Always infer exact dates accurately relative to today (${currentDate}). If user says "tomorrow", add 1 day. If they say "Friday", pick the upcoming Friday.
 2. If the user asks a question (e.g. "What's on my schedule today?"), provide a clear, organized markdown summary in "reply" and leave "actions" empty ([]).
-3. If the user commands an action (e.g. "Schedule team sync tomorrow at 3pm"), populate "actions" with the exact parameters and confirm in "reply".
+3. If the user commands an action or provides a bulk schedule (e.g. "Schedule team sync..." or pasting a syllabus), populate the "actions" array with ALL the corresponding events/tasks, generating as many actions as necessary to capture everything.
 4. Always provide 2-3 relevant "suggestedFollowUps" to keep the conversation flowing smoothly.
 5. Return ONLY raw JSON without markdown code fences (\`\`\`json).`;
 

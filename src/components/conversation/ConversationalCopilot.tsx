@@ -257,7 +257,7 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
 
     if ((normType === 'create_event' || normType === 'schedule_event' || normType === 'add_event') && payload) {
       const newEvent: CalendarEvent = {
-        id: `event-${Date.now()}`,
+        id: `event-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         title: payload.title || 'Untitled Event',
         startDate: payload.startDate || new Date().toLocaleDateString('en-CA'),
         startTime: payload.startTime || '09:00',
@@ -289,7 +289,7 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
       }
     } else if ((normType === 'create_task' || normType === 'add_task' || normType === 'new_task') && payload) {
       const newTask: Task = {
-        id: `task-${Date.now()}`,
+        id: `task-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         title: payload.title || 'Untitled Task',
         priority: payload.priority || 'medium',
         status: 'todo',
@@ -327,7 +327,7 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
       }
     } else if ((normType === 'create_idea' || normType === 'add_idea' || normType === 'new_idea') && payload) {
       const newIdea: IdeaNode = {
-        id: `idea-${Date.now()}`,
+        id: `idea-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         title: payload.title || 'New Thought',
         content: payload.content || payload.title || '',
         type: payload.type || 'concept',

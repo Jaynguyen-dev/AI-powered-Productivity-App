@@ -58,16 +58,24 @@ export const EventModal: React.FC<EventModalProps> = ({
       setConnectedProjectId(eventToEdit.connectedProjectId || '');
       setConnectedTaskId(eventToEdit.connectedTaskId || '');
     } else {
-      const todayStr = defaultDate || new Date().toLocaleDateString('en-CA');
-      setTitle('');
-      setDescription('');
-      setStartDate(todayStr);
-      setStartTime(defaultTime);
-      setEndDate(todayStr);
-      const [h, m] = defaultTime.split(':').map(Number);
-      const endH = ((h || 10) + 1) % 24;
-      setEndTime(`${endH < 10 ? '0' : ''}${endH}:${m < 10 ? '0' : ''}${m || 0}`);
-      setDurationMinutes(60);
+      const now = new Date();
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        const todayStr = defaultDate || now.toLocaleDateString('en-CA');
+        const currentTimeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        const finalTime = defaultTime || currentTimeStr;
+
+        setTitle('');
+        setDescription('');
+        setStartDate(todayStr);
+        setStartTime(finalTime);
+        setEndDate(todayStr);
+        
+        let [h, m] = finalTime.split(':').map(Number);
+        if (isNaN(h)) h = 10;
+        if (isNaN(m)) m = 0;
+        const endH = (h + 1) % 24;
+        setEndTime(`${pad(endH)}:${pad(m)}`);
+        setDurationMinutes(60);
       setRecurrence('none');
       setRecurrenceRuleText('');
       setCategory('deep_work');
