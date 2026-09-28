@@ -47,10 +47,11 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const clickOut = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setIsOpen(false);
+      if (containerRef.current && !containerRef.current.contains(e.target as Node) && (!menuRef.current || !menuRef.current.contains(e.target as Node))) setIsOpen(false);
     }
     document.addEventListener('mousedown', clickOut);
     return () => document.removeEventListener('mousedown', clickOut);
@@ -88,6 +89,7 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
+            ref={menuRef}
             className="fixed z-[9999] mt-2 p-1.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-1 max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
             style={{ top: coords.top, left: coords.left, width: coords.width }}
           >
