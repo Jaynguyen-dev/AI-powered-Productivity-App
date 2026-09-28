@@ -377,7 +377,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             {hours.map((hour) => (
               <div key={hour} className="absolute w-full flex items-center pointer-events-none" style={{ top: `${hour * 60}px`, height: '0px', marginTop: '-6px' }}>
                 <span className="w-16 text-[11px] text-white/40 font-mono flex-shrink-0 select-none pl-2 leading-none">
-                  {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '12 AM' : `${hour} AM`}
+                  {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '' : `${hour} AM`}
                 </span>
                 <div className="flex-1 border-t border-white/10"></div>
               </div>
@@ -453,7 +453,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               {hours.map((hour) => (
                 <div key={hour} className="absolute w-full flex items-center pointer-events-none" style={{ top: `${hour * 60}px`, height: '0px', marginTop: '-6px' }}>
                   <span className="w-[12.5%] text-[10px] text-white/40 font-mono flex-shrink-0 select-none text-center leading-none">
-                    {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '12 AM' : `${hour} AM`}
+                    {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : hour === 0 ? '' : `${hour} AM`}
                   </span>
                   <div className="flex-1 border-t border-white/10"></div>
                 </div>
