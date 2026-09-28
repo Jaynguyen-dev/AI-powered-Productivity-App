@@ -584,7 +584,8 @@ Answer the user directly and concisely.`;
     }
 
     // H. Schedule Calendar Event Intent (default parse via rule-based scheduling engine)
-    try {
+    if (raw.length < 250) {
+      try {
       const parsed = await this.schedulingParser.parse(raw);
       if (parsed.title && parsed.startDate && parsed.startTime) {
         return {
@@ -618,7 +619,8 @@ Answer the user directly and concisely.`;
         };
       }
     } catch {
-      // Not a scheduling command
+        // Not a scheduling command
+      }
     }
 
     // I. Friendly conversational answer
