@@ -3,7 +3,7 @@ import { CustomSelect } from '../common/CustomSelect';
 import { CustomDatePicker, CustomTimePicker } from '../common/DateTimePicker';
 import { CalendarEvent, EventRecurrence, EventCategory, Project, Task } from '../../types';
 import { Modal } from '../common/Modal';
-import { Trash2, Repeat, Calendar as CalendarIcon, Briefcase, Hash } from 'lucide-react';
+import { Trash2, Repeat, Calendar as CalendarIcon, Briefcase, Hash, Clock } from 'lucide-react';
 
 interface EventModalProps {
   isOpen: boolean;
@@ -126,17 +126,8 @@ export const EventModal: React.FC<EventModalProps> = ({
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-white/80 mb-1">Date</label>
-            <input
-              type="date" min={new Date().toLocaleDateString("en-CA")}
-              required
-              value={startDate}
-              onChange={(e) => {
-                setStartDate(e.target.value);
-                setEndDate(e.target.value);
-              }}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            />
+            <label className="block text-sm font-medium text-white/80 mb-1 flex items-center gap-1"><CalendarIcon className="w-3.5 h-3.5 text-blue-500" /> Date</label>
+            <CustomDatePicker value={startDate} onChange={(val) => { setStartDate(val); setEndDate(val); }} />
           </div>
           <div>
             <label className="block text-sm font-medium text-white/80 mb-1">Category</label>
@@ -161,24 +152,12 @@ export const EventModal: React.FC<EventModalProps> = ({
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-white/80 mb-1">Start Time</label>
-            <input
-              type="time"
-              required
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            />
+            <label className="block text-sm font-medium text-white/80 mb-1 flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-blue-500" /> Start Time</label>
+            <CustomTimePicker value={startTime} onChange={setStartTime} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-white/80 mb-1">End Time</label>
-            <input
-              type="time"
-              required
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none"
-            />
+            <label className="block text-sm font-medium text-white/80 mb-1 flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-blue-500" /> End Time</label>
+            <CustomTimePicker value={endTime} onChange={setEndTime} />
           </div>
         </div>
 
