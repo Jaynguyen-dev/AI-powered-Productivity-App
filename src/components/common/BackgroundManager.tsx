@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
+type TimeOfDay = 'day' | 'evening' | 'midnight';
+
 export const BackgroundManager = () => {
-  const [isNight, setIsNight] = useState(() => {
+  const getTimeOfDay = (): TimeOfDay => {
+    // If we are overriding via the debug flag, skip normal time check
+    if ((window as any).__forceTimeOfDay !== undefined) {
+      return (window as any).__forceTimeOfDay;
+    }
     const hour = new Date().getHours();
-    return hour >= 17 || hour < 7;
-  });
+    if (hour >= 7 && hour < 17) return 'day';
+    if (hour >= 21 || hour < 5) return 'midnight';
+    return 'evening';
+  };
+
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay);
 
   useEffect(() => {
     const checkTime = () => {
-      // If we are overriding via the debug flag, skip normal time check
-      if (window.__forceNight !== undefined) {
-        setIsNight(window.__forceNight);
-        return;
-      }
-      const hour = new Date().getHours();
-      setIsNight(hour >= 17 || hour < 7);
+      setTimeOfDay(getTimeOfDay());
     };
 
     // Check every second so it reacts instantly to clock changes
@@ -23,11 +27,15 @@ export const BackgroundManager = () => {
     // Check instantly when tabbing back to the window
     window.addEventListener('focus', checkTime);
 
-    // Secret debug toggle: press Shift + B to see the transition!
+    // Secret debug toggle: press Shift + B to cycle the transition!
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.shiftKey && e.key.toLowerCase() === 'b') {
-        window.__forceNight = !(window.__forceNight ?? isNight);
-        setIsNight(window.__forceNight);
+        const current = (window as any).__forceTimeOfDay || timeOfDay;
+        const next: TimeOfDay = 
+          current === 'day' ? 'evening' : 
+          current === 'evening' ? 'midnight' : 'day';
+        (window as any).__forceTimeOfDay = next;
+        setTimeOfDay(next);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -37,22 +45,32 @@ export const BackgroundManager = () => {
       window.removeEventListener('focus', checkTime);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isNight]);
+  }, [timeOfDay]);
 
   return (
     <>
+      {/* Day: Waterfall */}
       <div
         className="fixed inset-0 z-[-1] bg-cover bg-center bg-no-repeat transition-opacity duration-[2000ms] ease-in-out"
         style={{
           backgroundImage: "url('/background.jpg')",
-          opacity: isNight ? 0 : 1,
+          opacity: timeOfDay === 'day' ? 1 : 0,
         }}
       />
+      {/* Evening: Sunset River */}
       <div
         className="fixed inset-0 z-[-1] bg-cover bg-center bg-no-repeat transition-opacity duration-[2000ms] ease-in-out"
         style={{
           backgroundImage: "url('/background-night.jpg')",
-          opacity: isNight ? 1 : 0,
+          opacity: timeOfDay === 'evening' ? 1 : 0,
+        }}
+      />
+      {/* Midnight: Moon */}
+      <div
+        className="fixed inset-0 z-[-1] bg-cover bg-center bg-no-repeat transition-opacity duration-[2000ms] ease-in-out"
+        style={{
+          backgroundImage: "url('/background-midnight.jpg')",
+          opacity: timeOfDay === 'midnight' ? 1 : 0,
         }}
       />
     </>
