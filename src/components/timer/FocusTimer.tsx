@@ -290,7 +290,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     const mR = 13, mC = 2 * Math.PI * mR;
     return (
       <div className='fixed bottom-5 right-5 z-50 animate-in fade-in slide-in-from-bottom-2 duration-300'>
-        <GlassCard variant='glow' className='p-2.5 pl-3.5 pr-2.5 flex items-center gap-3 border-white/20 shadow-2xl backdrop-blur-2xl bg-black/20'>
+        <GlassCard variant='glow' className='p-2.5 pl-3.5 pr-2.5 flex items-center gap-3 border-white/20 shadow-2xl backdrop-blur-md bg-black/10'>
           <div className='relative w-8 h-8 flex-shrink-0'>
             <svg className='w-8 h-8 -rotate-90'>
               <circle cx='16' cy='16' r={mR} stroke='rgba(255,255,255,0.08)' strokeWidth='2.5' fill='none'/>
@@ -328,13 +328,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   return (
     <AnimatePresence>
     {isOpen && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-4 sm:p-6 md:p-8 overflow-hidden">
+      <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-4 sm:p-5 md:p-6 overflow-hidden">
       {/* Backdrop */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="fixed inset-0 bg-black/20 backdrop-blur-sm pointer-events-auto" onClick={onClose} />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="fixed inset-0 bg-black/10 backdrop-blur-sm pointer-events-auto" onClick={onClose} />
       
       {/* Modal Container */}
       <div className='pointer-events-auto z-10 animate-float w-full max-w-[820px] max-h-full flex flex-col'>
-        <motion.div initial={{ opacity: 0, scale: 0.85, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.85, y: 30 }} transition={{ type: "spring", stiffness: 350, damping: 25 }} className="w-full flex flex-col md:flex-row rounded-[36px] relative overflow-hidden bg-black/20 backdrop-blur-2xl border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.9)]">
+        <motion.div initial={{ opacity: 0, scale: 0.85, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.85, y: 30 }} transition={{ type: "spring", stiffness: 350, damping: 25 }} className="w-full flex flex-col md:flex-row rounded-[36px] relative overflow-hidden bg-black/10 backdrop-blur-md border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.9)]">
 
           {/* Decorative Backgrounds */}
           <div className='absolute inset-0 pointer-events-none rounded-[inherit]'
@@ -343,7 +343,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             style={{ background: isRelax ? 'rgba(52,211,153,0.12)' : 'rgba(244,63,94,0.12)', transition: 'background 0.5s ease' }}/>
 
           {/* LEFT COLUMN: Knob and Time */}
-          <div className='relative z-10 flex-1 flex flex-col items-center justify-center p-6 md:p-10 min-w-0 md:max-w-[400px]'>
+          <div className='relative z-10 flex-1 flex flex-col items-center justify-center p-5 md:p-10 min-w-0 md:max-w-[400px]'>
             
             {/* Toggle */}
             <div className='mb-6 sm:mb-8 flex-shrink-0'>
@@ -374,7 +374,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           </div>
 
           {/* RIGHT COLUMN: Info, Controls, Task */}
-          <div className='relative z-10 flex-1 min-w-0 flex flex-col justify-between p-6 md:p-10 md:border-l border-t md:border-t-0 border-white/10'>
+          <div className='relative z-10 flex-1 min-w-0 flex flex-col justify-between p-5 md:p-10 md:border-l border-t md:border-t-0 border-white/10'>
             
             {/* Header: Title and Top Controls */}
             <div className='flex items-start justify-between gap-4 mb-8 flex-shrink-0'>
@@ -443,7 +443,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               <div className='flex items-center gap-2 min-w-0'>
                 <div className='flex-1 min-w-0 relative'>
                   <select value={selectedTaskId || ''} onChange={e => setSelectedTaskId(e.target.value || null)}
-                    className='w-full truncate px-4 py-3.5 rounded-xl bg-black/20 border border-white/10 text-white text-xs focus:outline-none focus:border-rose-400 cursor-pointer appearance-none pr-8'>
+                    className='w-full truncate px-4 py-3.5 rounded-xl bg-black/10 border border-white/10 text-white text-xs focus:outline-none focus:border-rose-400 cursor-pointer appearance-none pr-8'>
                     <option value=''>No task linked</option>
                     {tasks.filter(t => t.status !== 'completed').map(task => (
                       <option key={task.id} value={task.id}>[{task.priority.toUpperCase()}] {task.title}</option>

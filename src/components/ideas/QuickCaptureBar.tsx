@@ -43,7 +43,7 @@ export const QuickCaptureBar: React.FC<QuickCaptureBarProps> = ({
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-11 pr-24 py-3 rounded-2xl bg-black/60/80 backdrop-blur-2xl border border-white/15 text-slate-100 placeholder-slate-400 text-base focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-amber-400 shadow-xl shadow-black/30 transition-all"
+          className="w-full pl-11 pr-24 py-3 rounded-2xl bg-black/20 backdrop-blur-md border border-white/15 text-slate-100 placeholder-slate-400 text-base focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-amber-400 shadow-xl shadow-black/30 transition-all"
         />
         <button
           type="submit"

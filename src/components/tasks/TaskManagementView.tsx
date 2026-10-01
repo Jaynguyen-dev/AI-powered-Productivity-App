@@ -149,10 +149,10 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
   return (
     <div className="space-y-5">
       {/* Workload Overview Card */}
-      <GlassCard className="p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <GlassCard className="p-5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Stats grouping */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 flex-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 flex-1">
             <div className="p-3 rounded-xl bg-white/10 border border-white/10">
               <span className="text-sm text-white/60 font-medium">Workload Progress</span>
               <div className="flex items-baseline gap-2 mt-1">
@@ -219,10 +219,10 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
       </GlassCard>
 
       {/* Control Bar: Filters, Search, and Sort */}
-      <GlassCard className="p-5 sm:p-6">
+      <GlassCard className="p-5 sm:p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Tab Navigation */}
-          <div className="flex overflow-x-auto whitespace-nowrap hide-scrollbar items-center gap-1 p-1 rounded-xl bg-black/20 border border-white/10 w-full md:w-auto">
+          <div className="flex overflow-x-auto whitespace-nowrap hide-scrollbar items-center gap-1 p-1 rounded-xl bg-black/10 border border-white/10 w-full md:w-auto">
             {[
               { id: 'all', label: 'All Tasks', count: tasks.length },
               { id: 'today', label: 'Due Today', count: dueTodayCount },
@@ -264,7 +264,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search tasks or tags..."
-                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-black/20 border border-white/10 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-black/10 border border-white/10 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
               />
             </div>
 
@@ -272,7 +272,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
             <select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
-              className="px-2.5 py-1.5 rounded-xl bg-black/20 border border-white/10 text-sm text-white/80 focus:outline-none cursor-pointer"
+              className="px-2.5 py-1.5 rounded-xl bg-black/10 border border-white/10 text-sm text-white/80 focus:outline-none cursor-pointer"
             >
               <option value="all" className="bg-black/80">All Projects</option>
               {projects.map((p) => (
@@ -283,7 +283,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
             </select>
 
             {/* Sort Filter */}
-            <div className="flex items-center rounded-xl bg-black/20 border border-white/10 p-1 text-sm text-white/80">
+            <div className="flex items-center rounded-xl bg-black/10 border border-white/10 p-1 text-sm text-white/80">
               <ArrowUpDown className="w-3.5 h-3.5 ml-1.5 text-white/60" />
               <select
                 value={sortBy}
@@ -330,7 +330,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
               <GlassCard
                 key={task.id}
                 id={`task-item-${task.id}`}
-                className={`p-6 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                className={`p-5 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                   isCompleted ? 'opacity-60 bg-white/10' : 'hover:border-white/20'
                 }`}
               >

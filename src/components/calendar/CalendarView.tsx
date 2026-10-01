@@ -217,7 +217,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           
           {/* Left: Navigation and Date */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center rounded-xl bg-black/20 border border-white/10 p-1">
+            <div className="flex items-center rounded-xl bg-black/10 border border-white/10 p-1">
               <button
                 type="button"
                 onClick={handlePrev}
@@ -248,7 +248,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           {/* Right: View Mode Toggle & Add Actions */}
           <div className="flex items-center gap-3">
             {/* View Mode Buttons */}
-            <div className="flex items-center rounded-xl bg-black/20 border border-white/10 p-1">
+            <div className="flex items-center rounded-xl bg-black/10 border border-white/10 p-1">
               {(['day', 'week', 'month'] as CalendarViewMode[]).map((mode) => (
                 <button
                   key={mode}
@@ -292,7 +292,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         {/* Bottom Row: Filters */}
         <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-white/10">
           {/* Category Filter */}
-          <div className="flex items-center rounded-xl bg-black/20 border border-white/10 p-1 text-sm text-white/80">
+          <div className="flex items-center rounded-xl bg-black/10 border border-white/10 p-1 text-sm text-white/80">
             <Filter className="w-3.5 h-3.5 ml-2 text-white/60" />
             <select
               value={selectedCategory}
@@ -326,7 +326,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
       {/* VIEW: DAY VIEW */}
       {viewMode === 'day' && (
-        <GlassCard className="p-6 sm:p-6 overflow-x-auto">
+        <GlassCard className="p-5 sm:p-5 overflow-x-auto">
           {/* Day Header */}
           <div className="flex items-center justify-between pb-4 border-b border-white/40 mb-4">
             <div className="flex items-center gap-3">
@@ -409,7 +409,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
       {/* VIEW: WEEK VIEW */}
       {viewMode === 'week' && (
-        <GlassCard className="p-3 sm:p-6 overflow-x-auto">
+        <GlassCard className="p-3 sm:p-5 overflow-x-auto">
           <div className="min-w-[760px]">
             {/* Week Header Row */}
             <div className="grid grid-cols-8 gap-2 pb-3 border-b border-white/40 text-center">
@@ -520,7 +520,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
       {/* VIEW: MONTH VIEW */}
       {viewMode === 'month' && (
-        <GlassCard className="p-3 sm:p-6">
+        <GlassCard className="p-3 sm:p-5">
           {/* Day of Week Header */}
           <div className="grid grid-cols-7 gap-1 sm:gap-2 pb-2 text-center text-sm font-semibold text-white/60">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (

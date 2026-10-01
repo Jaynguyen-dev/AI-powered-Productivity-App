@@ -697,7 +697,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 animate-in fade-in slide-in-from-top-2 duration-200">
               <GlassCard
                 variant="glow"
-                className="px-4 py-2 border-blue-500/50 shadow-2xl flex items-center gap-3 backdrop-blur-2xl"
+                className="px-4 py-2 border-blue-500/50 shadow-2xl flex items-center gap-3 backdrop-blur-md"
               >
                 <div className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
                 <span className="text-sm font-semibold text-blue-200">
@@ -1020,7 +1020,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
             <div className="absolute bottom-4 left-4 z-20">
               <GlassCard
                 variant="subtle"
-                className="w-36 h-28 p-1.5 relative overflow-hidden border-white/10 bg-white/10 backdrop-blur-2xl shadow-xl"
+                className="w-36 h-28 p-1.5 relative overflow-hidden border-white/10 bg-white/10 backdrop-blur-md shadow-xl"
               >
                 
                 <svg className="w-full h-full">
@@ -1065,7 +1065,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
             <div className="absolute bottom-4 right-4 z-30 w-80 sm:w-96 animate-in slide-in-from-bottom-3 duration-200">
               <GlassCard
                 variant="elevated"
-                className="p-6 border-blue-500/50 shadow-2xl backdrop-blur-2xl bg-white/10"
+                className="p-6 border-blue-500/50 shadow-2xl backdrop-blur-md bg-white/10"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">

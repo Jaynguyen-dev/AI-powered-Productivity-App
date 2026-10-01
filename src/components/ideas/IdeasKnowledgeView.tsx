@@ -112,10 +112,10 @@ export const IdeasKnowledgeView: React.FC<IdeasKnowledgeViewProps> = ({
       </GlassCard>
 
       {/* Control Bar: Mode Toggle, Search, Filter */}
-      <GlassCard className="p-5 sm:p-6">
+      <GlassCard className="p-5 sm:p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* View Mode Toggle: Interactive Graph vs Structured List */}
-          <div className="flex items-center rounded-xl bg-black/20 border border-white/10 p-1">
+          <div className="flex items-center rounded-xl bg-black/10 border border-white/10 p-1">
             <button
               type="button"
               id="btn-view-graph"
@@ -154,7 +154,7 @@ export const IdeasKnowledgeView: React.FC<IdeasKnowledgeViewProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search ideas or tags..."
-                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-black/20 border border-white/10 text-sm text-white placeholder-white/40 focus:outline-none"
+                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-black/10 border border-white/10 text-sm text-white placeholder-white/40 focus:outline-none"
               />
             </div>
 
@@ -162,7 +162,7 @@ export const IdeasKnowledgeView: React.FC<IdeasKnowledgeViewProps> = ({
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="px-2.5 py-1.5 rounded-xl bg-black/20 border border-white/10 text-sm text-white/80 focus:outline-none cursor-pointer capitalize"
+              className="px-2.5 py-1.5 rounded-xl bg-black/10 border border-white/10 text-sm text-white/80 focus:outline-none cursor-pointer capitalize"
             >
               <option value="all" className="bg-black/80">All Node Types</option>
               <option value="concept" className="bg-black/80">Concept</option>
@@ -178,7 +178,7 @@ export const IdeasKnowledgeView: React.FC<IdeasKnowledgeViewProps> = ({
               <select
                 value={selectedTag}
                 onChange={(e) => setSelectedTag(e.target.value)}
-                className="px-2.5 py-1.5 rounded-xl bg-black/20 border border-white/10 text-sm text-white/80 focus:outline-none cursor-pointer"
+                className="px-2.5 py-1.5 rounded-xl bg-black/10 border border-white/10 text-sm text-white/80 focus:outline-none cursor-pointer"
               >
                 <option value="all" className="bg-black/80">All Tags</option>
                 {allTags.map((tag) => (
@@ -233,7 +233,7 @@ export const IdeasKnowledgeView: React.FC<IdeasKnowledgeViewProps> = ({
                 key={idea.id}
                 variant="interactive"
                 onClick={() => onEditIdea(idea)}
-                className="p-6 flex flex-col justify-between"
+                className="p-5 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2">

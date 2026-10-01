@@ -79,7 +79,7 @@ const TooltipOverlay: React.FC<{ cell: { date: string; count: number; rect: DOMR
   return (
     <div 
       ref={tooltipRef}
-      className="fixed px-3.5 py-2.5 rounded-xl bg-slate-900/98 border border-white/10 shadow-2xl backdrop-blur-2xl transition-opacity duration-150 animate-in fade-in zoom-in-95"
+      className="fixed px-3.5 py-2.5 rounded-xl bg-slate-900/98 border border-white/10 shadow-2xl backdrop-blur-md transition-opacity duration-150 animate-in fade-in zoom-in-95"
       style={style}
     >
       <p className="text-xs font-bold text-white whitespace-nowrap drop-shadow-md">

@@ -42,9 +42,9 @@ export const ProjectsManagementView: React.FC<ProjectsManagementViewProps> = ({
     : [];
 
   return (
-    <div className="flex h-full gap-6 pb-20 sm:pb-0">
+    <div className="flex h-full gap-4 pb-20 sm:pb-0">
       {/* Left Sidebar - Projects List */}
-      <div className="w-full sm:w-1/3 flex flex-col gap-6">
+      <div className="w-full sm:w-1/3 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <FolderKanban className="w-5 h-5 text-blue-500" />
@@ -72,7 +72,7 @@ export const ProjectsManagementView: React.FC<ProjectsManagementViewProps> = ({
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
           {filteredProjects.length === 0 ? (
-            <div className="text-center p-6 bg-white/5 rounded-xl border border-white/10 border-dashed">
+            <div className="text-center p-5 bg-white/5 rounded-xl border border-white/10 border-dashed">
               <FolderKanban className="w-8 h-8 mx-auto text-white/30 mb-2" />
               <p className="text-base text-white/60">No projects found.</p>
             </div>
@@ -103,7 +103,7 @@ export const ProjectsManagementView: React.FC<ProjectsManagementViewProps> = ({
       {/* Right Content - Project Details & Ideas */}
       <div className="hidden sm:flex w-2/3 flex-col h-full">
         {selectedProject ? (
-          <GlassCard className="flex-1 p-6 flex flex-col">
+          <GlassCard className="flex-1 p-5 flex flex-col">
             {/* Header */}
             <div className="flex items-start justify-between border-b border-white/10 pb-4 mb-4">
               <div className="flex items-center gap-3">
@@ -181,7 +181,7 @@ export const ProjectsManagementView: React.FC<ProjectsManagementViewProps> = ({
               
               <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                 {projectIdeas.length === 0 ? (
-                  <div className="text-center p-8 bg-white/5 rounded-xl border border-white/10 border-dashed">
+                  <div className="text-center p-6 bg-white/5 rounded-xl border border-white/10 border-dashed">
                     <Lightbulb className="w-8 h-8 mx-auto text-white/30 mb-2" />
                     <p className="text-base text-white/60">No ideas associated with this project yet.</p>
                     <button

@@ -74,13 +74,13 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   const highPriorityCount = tasks.filter((t) => t.priority === 'high' && t.status !== 'completed').length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Top Banner: Greeting & Quick Capture */}
-      <GlassCard variant="elevated" className="p-6 relative overflow-hidden">
+      <GlassCard variant="elevated" className="p-5 relative overflow-hidden">
         {/* Subtle decorative glow */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 text-sm font-bold text-blue-500 uppercase tracking-wider">
               <span>Workspace Overview</span>
@@ -132,7 +132,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         <GlassCard
           variant="interactive"
           onClick={() => onNavigateTab('calendar')}
-          className="p-6 flex items-center justify-between"
+          className="p-5 flex items-center justify-between"
         >
           <div>
             <span className="text-sm text-white/90 font-bold">Scheduled Today</span>
@@ -148,7 +148,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         <GlassCard
           variant="interactive"
           onClick={() => onNavigateTab('tasks')}
-          className="p-6 flex items-center justify-between"
+          className="p-5 flex items-center justify-between"
         >
           <div>
             <span className="text-sm text-rose-300 font-bold">High Priority</span>
@@ -164,7 +164,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         <GlassCard
           variant="interactive"
           onClick={() => onNavigateTab('tasks')}
-          className="p-6 flex items-center justify-between"
+          className="p-5 flex items-center justify-between"
         >
           <div>
             <span className="text-sm text-emerald-400 font-bold">Completed Work</span>
@@ -180,7 +180,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         <GlassCard
           variant="interactive"
           onClick={() => onNavigateTab('ideas')}
-          className="p-6 flex items-center justify-between"
+          className="p-5 flex items-center justify-between"
         >
           <div>
             <span className="text-sm text-amber-400 font-bold">Knowledge Graph</span>
@@ -200,9 +200,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       }} />
 
       {/* Main Dual Grid: Today's Schedule & Priority Queue */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Today's Schedule */}
-        <GlassCard className="p-6 flex flex-col justify-between">
+        <GlassCard className="p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
               <div className="flex items-center gap-2">
@@ -272,7 +272,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         </GlassCard>
 
         {/* Priority Task Queue */}
-        <GlassCard className="p-6 flex flex-col justify-between">
+        <GlassCard className="p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
               <div className="flex items-center gap-2">
@@ -346,9 +346,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       </div>
 
       {/* Connected Projects & Ideas Highlights */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Projects Progress */}
-        <GlassCard className="p-6 lg:col-span-2">
+        <GlassCard className="p-5 lg:col-span-2">
           <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <div className="flex items-center gap-2">
               <Folder className="w-4 h-4 text-blue-500" />
@@ -417,7 +417,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         </GlassCard>
 
         {/* Ideas Knowledge Highlights */}
-        <GlassCard className="p-6 flex flex-col justify-between">
+        <GlassCard className="p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
               <div className="flex items-center gap-2">

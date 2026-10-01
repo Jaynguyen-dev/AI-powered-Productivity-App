@@ -472,11 +472,11 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex p-4 sm:p-8 gap-6 selection:bg-blue-500/30 selection:text-blue-200 overflow-hidden text-white bg-transparent">
+    <div className="min-h-screen flex p-3 sm:p-6 gap-4 selection:bg-blue-500/30 selection:text-blue-200 overflow-hidden text-white bg-transparent">
       <BackgroundManager />
       
       {/* Zen Floating Glass Sidebar (Pill) */}
-      <aside className="hidden md:flex flex-col w-[80px] h-full shrink-0 items-center py-6 bg-black/20 backdrop-blur-2xl rounded-[40px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+      <aside className="hidden md:flex flex-col w-[80px] h-full shrink-0 items-center py-6 bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30 mb-8 cursor-pointer hover:scale-105 transition-transform" onClick={() => setSidebarOpen(!sidebarOpen)}>
           <Sparkles className="w-6 h-6 text-white" />
         </div>
@@ -529,10 +529,10 @@ export default function App() {
       </aside>
 
       {/* Main Content Area (Glass Window) */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-black/20 backdrop-blur-2xl rounded-[40px] border border-white/10 shadow-[0_24px_50px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)] relative">
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_24px_50px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)] relative">
         
                 {/* Mobile Header (Fallback) */}
-        <header className="md:hidden flex items-center justify-between p-4 border-b border-white/10 bg-black/20">
+        <header className="md:hidden flex items-center justify-between p-4 border-b border-white/10 bg-black/10">
           <div className="flex items-center gap-3">
             {activeTab !== 'dashboard' ? (
               <button 

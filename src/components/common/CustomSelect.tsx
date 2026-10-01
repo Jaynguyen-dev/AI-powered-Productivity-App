@@ -90,7 +90,7 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
             ref={menuRef}
-            className="fixed z-[9999] mt-2 p-1.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-1 max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+            className="fixed z-[9999] mt-2 p-1.5 rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-1 max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
             style={{ top: coords.top, left: coords.left, width: coords.width }}
           >
             {options.map((opt) => {

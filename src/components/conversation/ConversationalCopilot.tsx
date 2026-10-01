@@ -502,7 +502,7 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 50, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className={`pointer-events-auto flex flex-col h-full bg-black/20 backdrop-blur-xl rounded-[32px] border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8),inset_0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden z-10 transition-[width] duration-300 ${
+          className={`pointer-events-auto flex flex-col h-full bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8),inset_0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden z-10 transition-[width] duration-300 ${
             isExpanded ? "w-full md:w-[700px]" : "w-full md:w-[480px]"
           }`}
         >
@@ -612,7 +612,7 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
         </div>
 
         {/* Message Stream */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-5 text-[14px] bg-black/20 backdrop-blur-2xl custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-6 space-y-5 text-[14px] bg-transparent custom-scrollbar">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -627,7 +627,7 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
               <div
                 className={`max-w-[85%] rounded-[24px] p-4 leading-relaxed shadow-sm ${
                   msg.role === 'user'
-                    ? 'bg-black/20 text-white rounded-tr-sm border border-white/10'
+                    ? 'bg-black/10 text-white rounded-tr-sm border border-white/10'
                     : 'bg-white/5 text-white rounded-tl-sm border border-white/10'
                 }`}
               >
@@ -710,7 +710,7 @@ export const ConversationalCopilot: React.FC<ConversationalCopilotProps> = ({
         </div>
 
         {/* Input Area */}
-        <div className="p-5 border-t border-white/60 bg-black/20 backdrop-blur-2xl space-y-3 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        <div className="p-5 border-t border-white/60 bg-transparent space-y-3 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
           {/* Quick Voice Wave Indicator */}
           {isVoiceActive && (
             <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-2xl bg-blue-100 border border-blue-300 text-blue-600 text-sm font-bold animate-pulse">
