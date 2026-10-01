@@ -26,6 +26,7 @@ import { FocusTimer } from './components/timer/FocusTimer';
 import { ConversationalCopilot } from './components/conversation/ConversationalCopilot';
 import { ToastContainer } from './components/common/ToastContainer';
 import { TutorialOverlay } from './components/common/TutorialOverlay';
+import { BackgroundManager } from './components/common/BackgroundManager';
 import {
   LayoutDashboard,
   Calendar as CalendarIcon,
@@ -472,6 +473,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex p-4 sm:p-8 gap-6 selection:bg-blue-500/30 selection:text-blue-200 overflow-hidden text-white bg-transparent">
+      <BackgroundManager />
       
       {/* Zen Floating Glass Sidebar (Pill) */}
       <aside className="hidden md:flex flex-col w-[80px] h-full shrink-0 items-center py-6 bg-black/20 backdrop-blur-2xl rounded-[40px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)]">

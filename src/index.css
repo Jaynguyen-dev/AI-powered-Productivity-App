@@ -19,7 +19,8 @@
     color: #ffffff;
     text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 1px 8px rgba(0,0,0,0.4);
     /* Rich, moody, dark spatial background to make the glass pop */
-    background: url('/background.jpg') center center / cover no-repeat;
+    /* Background handled by BackgroundManager in App.tsx */
+    background-color: #04070d;
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
