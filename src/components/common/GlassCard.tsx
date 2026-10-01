@@ -17,15 +17,15 @@ export const GlassCard: React.FC<GlassCardProps> = ({
   let baseStyles = 'rounded-[32px] transition-all duration-300 relative overflow-hidden backdrop-blur-md';
 
   if (variant === 'default') {
-    baseStyles += ' bg-black/10 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)] text-white';
+    baseStyles += ' bg-black/30 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)] text-white';
   } else if (variant === 'subtle') {
-    baseStyles += ' bg-black/10 border border-white/5 text-white font-bold';
+    baseStyles += ' bg-black/30 border border-white/5 text-white font-bold';
   } else if (variant === 'elevated') {
-    baseStyles += ' bg-black/20 border-t border-white/20 border-l border-white/20 border-r border-white/10 border-b border-white/5 shadow-[0_20px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] text-white';
+    baseStyles += ' bg-black/30 border-t border-white/20 border-l border-white/20 border-r border-white/10 border-b border-white/5 shadow-[0_20px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] text-white';
   } else if (variant === 'interactive') {
-    baseStyles += ' bg-black/10 hover:bg-black/20 border border-white/10 hover:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] cursor-pointer text-white';
+    baseStyles += ' bg-black/30 hover:bg-black/30 border border-white/10 hover:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] cursor-pointer text-white';
   } else if (variant === 'glow') {
-    baseStyles += ' bg-black/20 border border-white/20 shadow-[0_0_30px_rgba(255,159,10,0.2),inset_0_1px_0_rgba(255,255,255,0.2)] text-white';
+    baseStyles += ' bg-black/30 border border-white/20 shadow-[0_0_30px_rgba(255,159,10,0.2),inset_0_1px_0_rgba(255,255,255,0.2)] text-white';
   }
 
   if (variant === 'interactive') {

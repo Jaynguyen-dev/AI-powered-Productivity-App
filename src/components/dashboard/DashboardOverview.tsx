@@ -195,9 +195,11 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       </div>
 
       {/* Activity Contribution Graph */}
-      <ContributionGraph tasks={tasks} onSelectDate={(date) => {
-        onNavigateTab('tasks');
-      }} />
+      <div className="-mb-2 relative z-10">
+        <ContributionGraph tasks={tasks} onSelectDate={(date) => {
+          onNavigateTab('tasks');
+        }} />
+      </div>
 
       {/* Main Dual Grid: Today's Schedule & Priority Queue */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

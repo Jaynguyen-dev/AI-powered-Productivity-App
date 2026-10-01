@@ -529,7 +529,7 @@ export default function App() {
       </aside>
 
       {/* Main Content Area (Glass Window) */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_24px_50px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)] relative">
+      <div className="flex-1 flex flex-col h-full overflow-hidden rounded-[32px] overflow-hidden relative">
         
                 {/* Mobile Header (Fallback) */}
         <header className="md:hidden flex items-center justify-between p-4 border-b border-white/10 bg-black/10">

@@ -221,7 +221,7 @@ export const ContributionGraph: React.FC<ContributionGraphProps> = ({ tasks, onS
   };
 
   return (
-    <GlassCard className="p-6 relative">
+    <GlassCard className="p-4 relative">
       {hoveredCell && createPortal(<TooltipOverlay cell={hoveredCell} />, document.body)}
 
       {/* Header & Stats */}
@@ -278,7 +278,7 @@ export const ContributionGraph: React.FC<ContributionGraphProps> = ({ tasks, onS
               <span 
                 key={i} 
                 className="absolute text-[10px] font-bold text-white/60 uppercase tracking-widest"
-                style={{ left: `${lbl.colIndex * 16}px` }}
+                style={{ left: `${lbl.colIndex * 14}px` }}
               >
                 {lbl.text}
               </span>
@@ -288,13 +288,13 @@ export const ContributionGraph: React.FC<ContributionGraphProps> = ({ tasks, onS
           <div className="flex gap-2">
             {/* Weekdays */}
             <div className="flex flex-col gap-1 text-[9px] font-bold text-white/50 uppercase tracking-widest w-6 text-right">
-              <span className="h-[12px] flex items-center justify-end invisible">Sun</span>
-              <span className="h-[12px] flex items-center justify-end">Mon</span>
-              <span className="h-[12px] flex items-center justify-end invisible">Tue</span>
-              <span className="h-[12px] flex items-center justify-end">Wed</span>
-              <span className="h-[12px] flex items-center justify-end invisible">Thu</span>
-              <span className="h-[12px] flex items-center justify-end">Fri</span>
-              <span className="h-[12px] flex items-center justify-end invisible">Sat</span>
+              <span className="h-[10px] flex items-center justify-end invisible">Sun</span>
+              <span className="h-[10px] flex items-center justify-end">Mon</span>
+              <span className="h-[10px] flex items-center justify-end invisible">Tue</span>
+              <span className="h-[10px] flex items-center justify-end">Wed</span>
+              <span className="h-[10px] flex items-center justify-end invisible">Thu</span>
+              <span className="h-[10px] flex items-center justify-end">Fri</span>
+              <span className="h-[10px] flex items-center justify-end invisible">Sat</span>
             </div>
 
             {/* Grid */}
@@ -312,7 +312,7 @@ export const ContributionGraph: React.FC<ContributionGraphProps> = ({ tasks, onS
                          if (onSelectDate) onSelectDate(day.date);
                          setHoveredCell(null);
                       }}
-                      className={`w-[12px] h-[12px] rounded-[3px] border transition-all duration-300 ${getColorClass(day.count)} ${onSelectDate ? 'cursor-pointer hover:scale-125 hover:z-10 relative' : ''}`}
+                      className={`w-[10px] h-[10px] rounded-[3px] border transition-all duration-300 ${getColorClass(day.count)} ${onSelectDate ? 'cursor-pointer hover:scale-125 hover:z-10 relative' : ''}`}
                     />
                   ))}
                 </div>
@@ -323,11 +323,11 @@ export const ContributionGraph: React.FC<ContributionGraphProps> = ({ tasks, onS
       </div>
 
       {/* Legend */}
-      <div className="mt-6 flex items-center justify-end gap-2 text-[10px] font-bold text-white/40 uppercase tracking-wider">
+      <div className="mt-4 flex items-center justify-end gap-2 text-[10px] font-bold text-white/40 uppercase tracking-wider">
         <span>Less</span>
         <div className="flex gap-1 ml-1 mr-1">
           {[0, 1, 2, 3, 4].map(level => (
-            <div key={level} className={`w-[12px] h-[12px] rounded-[3px] border ${getColorClass(level)}`} />
+            <div key={level} className={`w-[10px] h-[10px] rounded-[3px] border ${getColorClass(level)}`} />
           ))}
         </div>
         <span>More</span>
