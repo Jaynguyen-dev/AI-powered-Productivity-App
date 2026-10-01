@@ -58,7 +58,7 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm"
             onClick={onClose}
             aria-hidden="true"
           />
@@ -69,10 +69,10 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 30 }}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className={`relative w-full ${maxWidthClasses} bg-black/60 backdrop-blur-md border border-white/10 rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] z-10 overflow-hidden flex flex-col max-h-[85vh]`}
+            className={`relative w-full ${maxWidthClasses} bg-black/30 backdrop-blur-md border border-white/10 rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] z-10 overflow-hidden flex flex-col max-h-[85vh]`}
           >
             {/* Header (Zen Style) */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-white/10 bg-black/40 backdrop-blur-md shrink-0">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/10 bg-black/20 backdrop-blur-md shrink-0">
               <div className="flex flex-col">
                 <h3 className="text-[19px] font-bold text-white tracking-tight">{title}</h3>
                 {subtitle && <p className="text-[14px] text-white/60 font-medium mt-0.5">{subtitle}</p>}
