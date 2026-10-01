@@ -194,10 +194,17 @@ export const ContributionGraph: React.FC<ContributionGraphProps> = ({ tasks, onS
     const mLabels: { text: string; colIndex: number }[] = [];
     let lastMonth = -1;
     generatedWeeks.forEach((w, colIdx) => {
+      if (!w || !w[0]) return;
       const wMonth = w[0].month;
       if (wMonth !== lastMonth) {
         const monthName = new Date(w[0].date).toLocaleString('default', { month: 'short' });
-        mLabels.push({ text: monthName, colIndex: colIdx });
+        if (mLabels.length > 0 && (colIdx - mLabels[mLabels.length - 1].colIndex < 3)) {
+          if (mLabels[mLabels.length - 1].colIndex === 0) {
+            mLabels[mLabels.length - 1] = { text: monthName, colIndex: colIdx };
+          }
+        } else {
+          mLabels.push({ text: monthName, colIndex: colIdx });
+        }
         lastMonth = wMonth;
       }
     });
