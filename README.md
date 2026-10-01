@@ -1,31 +1,31 @@
-# 🏔️ Zen Productivity Workspace
+# Zen: AI-Powered Productivity Workspace
 
 Zen is an **agentic, spatial workspace** designed to unify your tasks, calendar, and knowledge graph into a single, cohesive environment. 
 
 **Is this just a chatbot app?**  
 No. While Zen features a conversational AI interface, it is far more than a chatbot. It is a fully functional productivity suite where the AI acts as an **executive assistant**. Instead of just answering questions, the AI has direct read/write access to your local workspace—it can physically schedule calendar events, create task tickets, link conceptual nodes in your knowledge graph, and manage your focus timers based on your natural language commands.
 
-## ✨ Features
+## ✨ Core Features
 
-- **Spatial Glassmorphism UI:** A beautiful, responsive interface featuring 3D transitions, frosted glass panels, and a calming Yale Blue / Crimson aesthetic over a nature-inspired backdrop.
-- **Conversational Copilot:** Press `Cmd/Ctrl + K` to summon Zen. Ask it to "Schedule a 45m design review tomorrow" or "Log a high priority task to ship the landing page" and watch the UI update instantly.
-- **Node-Based Idea Graph:** Visually map out your thoughts and connect them using relationship edges.
-- **Integrated Calendar & Tasks:** Manage your daily agenda and prioritize urgent work without leaving the app.
-- **Pomodoro Focus Timer:** A built-in, visually striking Crimson timer to keep you locked in and productive during deep work sessions.
-- **Local & Cloud AI Support:** Out-of-the-box support for Google Gemini in production, with fallback capabilities for local LLMs like Ollama and LM Studio for privacy-focused local development.
+- **Conversational Copilot:** Leverages Large Language Models (LLMs) to intelligently parse unstructured prose into structured calendar events, actionable tasks, and interconnected knowledge nodes.
+- **Interactive Knowledge Graph:** A visually mapped, physics-simulated graph data structure that allows you to spatially organize and explore semantic relationships between AI-extracted concepts and manual notes.
+- **Dynamic 4K Environments:** A 4-stage, time-based background system that seamlessly cross-fades between stunning 4K environments (Morning, Afternoon, Evening, Midnight) based on your local time to maintain immersion.
+- **Spatial Glassmorphism UI:** A premium, lightweight interface featuring true frosted glass panels, fluid animations, and a sophisticated dark aesthetic optimized for maximum readability and focus.
+- **Activity & Consistency Mapping:** A GitHub-style contribution heatmap that automatically tracks your completed tasks and productivity streaks over a 52-week rolling window.
+- **Edge-First Architecture:** Zero-latency client-side React state management that securely persists chatbot conversational context, schedules, and complex relational graphs entirely on your local machine.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v18 or higher)
-- Optional: A [Google Gemini API Key](https://aistudio.google.com/) OR a local instance of [Ollama](https://ollama.com/) / [LM Studio](https://lmstudio.ai/)
+- A [Google Gemini API Key](https://aistudio.google.com/) for cloud LLM processing, OR a local instance of [Ollama](https://ollama.com/) / [LM Studio](https://lmstudio.ai/) for offline inference.
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/zen-workspace.git
-   cd zen-workspace
+   git clone https://github.com/Jaynguyen-dev/AI-powered-Productivity-App.git
+   cd AI-powered-Productivity-App
    ```
 
 2. **Install dependencies**
@@ -43,16 +43,16 @@ No. While Zen features a conversational AI interface, it is far more than a chat
    ```bash
    npm run dev
    ```
-   The app will start on `http://localhost:3000`.
+   The application will start on `http://localhost:3000`.
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-- **Frontend:** React 19, Vite, Tailwind CSS v4, Framer Motion, Lucide Icons
-- **Backend:** Node.js, Express
-- **AI Integration:** `@google/genai` SDK
-- **Data Persistence:** LocalStorage (Zero-config persistence)
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, Motion (Framer), Lucide Icons
+- **Backend:** Node.js, Express (serving static assets & proxying AI requests)
+- **AI Integration:** Google GenAI SDK (`@google/genai`)
+- **Data Persistence:** LocalStorage (Zero-config local persistence)
 
-## 📦 Deployment
+## ☁️ Deployment
 
 Zen is architected as a unified Node.js/Express application. The `server.ts` handles the AI routing and statically serves the Vite production build. 
 
@@ -61,6 +61,6 @@ You can easily deploy it to platforms like Render or Railway:
 2. Set the start command to: `npm start`
 3. Provide your `GEMINI_API_KEY` as an environment variable.
 
-## 📄 License
+## 📝 License
 
 MIT License - feel free to use and modify for your own productivity needs!
