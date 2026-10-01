@@ -8,14 +8,36 @@ export const BackgroundManager = () => {
 
   useEffect(() => {
     const checkTime = () => {
+      // If we are overriding via the debug flag, skip normal time check
+      if (window.__forceNight !== undefined) {
+        setIsNight(window.__forceNight);
+        return;
+      }
       const hour = new Date().getHours();
       setIsNight(hour >= 17 || hour < 7);
     };
 
-    // Check every minute
-    const interval = setInterval(checkTime, 60000);
-    return () => clearInterval(interval);
-  }, []);
+    // Check every second so it reacts instantly to clock changes
+    const interval = setInterval(checkTime, 1000);
+    
+    // Check instantly when tabbing back to the window
+    window.addEventListener('focus', checkTime);
+
+    // Secret debug toggle: press Shift + B to see the transition!
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.key.toLowerCase() === 'b') {
+        window.__forceNight = !(window.__forceNight ?? isNight);
+        setIsNight(window.__forceNight);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', checkTime);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isNight]);
 
   return (
     <>
