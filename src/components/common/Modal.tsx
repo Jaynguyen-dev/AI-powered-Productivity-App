@@ -69,7 +69,7 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 30 }}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className={`relative w-full ${maxWidthClasses} bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] z-10 overflow-hidden flex flex-col max-h-[85vh]`}
+            className={`relative w-full ${maxWidthClasses} bg-black/60 backdrop-blur-xl border border-white/10 rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] z-10 overflow-hidden flex flex-col max-h-[85vh]`}
           >
             {/* Header (Zen Style) */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/10 bg-white/5 backdrop-blur-md shrink-0">
