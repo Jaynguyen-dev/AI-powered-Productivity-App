@@ -25,6 +25,7 @@ import { ProjectsManagementView } from './components/projects/ProjectsManagement
 import { FocusTimer } from './components/timer/FocusTimer';
 import { ConversationalCopilot } from './components/conversation/ConversationalCopilot';
 import { ToastContainer } from './components/common/ToastContainer';
+import { celebrateTaskCompletion } from './utils/celebration';
 import { TutorialOverlay } from './components/common/TutorialOverlay';
 import { BackgroundManager } from './components/common/BackgroundManager';
 import {
@@ -341,6 +342,7 @@ export default function App() {
     refreshAll();
 
     if (newStatus === 'completed') {
+      celebrateTaskCompletion();
       addToast('Task Completed', `"${task.title}" marked done`, 'success', {
         label: 'Undo',
         onClick: () => {
