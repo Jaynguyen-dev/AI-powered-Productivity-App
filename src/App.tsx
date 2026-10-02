@@ -481,7 +481,7 @@ export default function App() {
             <img src="/logo.png" alt="Logo" className="w-full h-full object-cover bg-black" />
           </div>
         
-        <nav className="flex-1 flex flex-col items-center gap-4 w-full">
+        <nav className="flex flex-col items-center gap-4 w-full">
           {[
             { id: 'dashboard', icon: LayoutDashboard, title: 'Dashboard' },
             { id: 'calendar', icon: CalendarIcon, title: 'Calendar' },

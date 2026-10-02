@@ -33,6 +33,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   onEditEvent,
   onToggleTaskComplete,
   onEditTask,
+  onUpdateEvent,
 }) => {
   // Current view mode: day, week, month
   const [viewMode, setViewMode] = useState<CalendarViewMode>('week');
