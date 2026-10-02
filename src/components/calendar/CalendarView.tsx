@@ -618,14 +618,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     </div>
                     {height >= 45 && evt.description && <p className="text-[11px] text-white/80 mt-1 line-clamp-1 truncate">{evt.description}</p>}
                     <div 
-                      className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
+                      className="absolute top-0 left-0 right-0 h-4 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                       onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-top')}
                          
                          
                          
                     />
                     <div 
-                      className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
+                      className="absolute bottom-0 left-0 right-0 h-4 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                       onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-bottom')}
                          
                          
@@ -724,14 +724,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                              </span>
                            )}
                            <div 
-                             className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
+                             className="absolute top-0 left-0 right-0 h-4 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                              onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-top')}
                          
                          
                          
                            />
                            <div 
-                             className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
+                             className="absolute bottom-0 left-0 right-0 h-4 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                              onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-bottom')}
                          
                          

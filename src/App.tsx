@@ -476,7 +476,7 @@ export default function App() {
       <BackgroundManager />
       
       {/* Zen Floating Glass Sidebar (Pill) */}
-      <aside className="hidden md:flex flex-col justify-evenly w-[80px] h-full shrink-0 items-center py-6 bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+      <aside className="hidden md:flex flex-col justify-start gap-6 w-[80px] h-full shrink-0 items-center py-6 bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
         <div className="w-12 h-12 rounded-full overflow-hidden shadow-lg shadow-blue-500/20 cursor-pointer hover:scale-105 transition-transform ring-2 ring-white/10" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <img src="/logo.png" alt="Logo" className="w-full h-full object-cover bg-black" />
           </div>
