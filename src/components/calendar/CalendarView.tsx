@@ -125,14 +125,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
          newEnd = Math.max(newEnd + deltaMins, newStart + 15);
       }
       
-      if (newStart < 0) {
-         newEnd -= newStart; 
-         newStart = 0;
-      }
-      if (newEnd > 1440) {
-         newStart -= (newEnd - 1440);
-         newEnd = 1440;
-      }
+              if (state.type === 'move') {
+          if (newStart < 0) {
+             newEnd -= newStart; 
+             newStart = 0;
+          }
+          if (newEnd > 1440) {
+             newStart -= (newEnd - 1440);
+             newEnd = 1440;
+          }
+        } else {
+          if (newStart < 0) newStart = 0;
+          if (newEnd > 1440) newEnd = 1440;
+        }
       
       if (newStart !== state.currentStartMins || newEnd !== state.currentEndMins || newDateStr !== state.currentDateStr) {
         state.currentStartMins = newStart;

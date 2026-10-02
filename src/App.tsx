@@ -623,7 +623,12 @@ export default function App() {
               setEventModalOpen(true);
             }}
             onToggleTaskComplete={handleToggleTaskComplete}
-          />
+          onUpdateEvent={(updatedEvent) => {
+              const updated = events.map(e => e.id === updatedEvent.id ? updatedEvent : e);
+              setEvents(updated);
+              storageService.saveEvents(updated);
+            }}
+            />
         )}
 
         {activeTab === 'tasks' && (
