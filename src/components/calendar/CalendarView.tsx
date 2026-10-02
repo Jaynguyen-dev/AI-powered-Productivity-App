@@ -21,6 +21,7 @@ interface CalendarViewProps {
   onEditEvent: (event: CalendarEvent) => void;
   onToggleTaskComplete?: (taskId: string) => void;
   onEditTask?: (task: Task) => void;
+  onUpdateEvent?: (updatedEvent: CalendarEvent) => void;
 }
 
 export const CalendarView: React.FC<CalendarViewProps> = ({
@@ -39,6 +40,166 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [showTaskDeadlines, setShowTaskDeadlines] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  const [dragState, setDragState] = useState<{
+    eventId: string;
+    type: 'move' | 'resize-top' | 'resize-bottom';
+    pointerId: number;
+    initialStartMins: number;
+    initialEndMins: number;
+    initialDate: string;
+    startY: number;
+    startX: number;
+    colWidth: number;
+    currentDateStr: string;
+    currentStartMins: number;
+    currentEndMins: number;
+    hasMoved: boolean;
+  } | null>(null);
+
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  
+  const formatMinsToTime = (mins: number) => {
+    mins = Math.max(0, Math.min(1440, mins));
+    const h = Math.floor(mins / 60);
+    const m = Math.floor(mins % 60);
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  };
+
+  const handlePointerDown = (e: React.PointerEvent, event: CalendarEvent, type: 'move' | 'resize-top' | 'resize-bottom') => {
+    e.stopPropagation();
+    if (e.button !== 0) return;
+    
+    if (containerRef.current) {
+      containerRef.current.setPointerCapture(e.pointerId);
+    }
+    
+    const startMins = parseTimeToMins(event.startTime);
+    const endMins = parseTimeToMins(event.endTime);
+    
+    // Estimate column width based on container for week view
+    let colW = 0;
+    if (containerRef.current && viewMode === 'week') {
+       colW = (containerRef.current.getBoundingClientRect().width * 0.125);
+    }
+    
+    setDragState({
+      eventId: event.id,
+      type,
+      pointerId: e.pointerId,
+      initialStartMins: startMins,
+      initialEndMins: endMins,
+      initialDate: event.startDate,
+      startY: e.clientY,
+      startX: e.clientX,
+      colWidth: colW,
+      currentDateStr: event.startDate,
+      currentStartMins: startMins,
+      currentEndMins: endMins,
+      hasMoved: false
+    });
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!dragState) return;
+    
+    const deltaY = e.clientY - dragState.startY;
+    const deltaMins = Math.round(deltaY / 15) * 15; // snap to 15 mins
+    
+    let newStart = dragState.initialStartMins;
+    let newEnd = dragState.initialEndMins;
+    let newDateStr = dragState.currentDateStr;
+    
+    if (dragState.type === 'move') {
+       newStart += deltaMins;
+       newEnd += deltaMins;
+       
+       if (viewMode === 'week' && dragState.colWidth > 0) {
+         const deltaX = e.clientX - dragState.startX;
+         const colShift = Math.round(deltaX / dragState.colWidth);
+         
+         if (colShift !== 0) {
+           const initialDateObj = new Date(dragState.initialDate + 'T12:00:00');
+           initialDateObj.setDate(initialDateObj.getDate() + colShift);
+           
+           const startOfWeek = new Date(currentDate);
+           startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+           const endOfWeek = new Date(startOfWeek);
+           endOfWeek.setDate(endOfWeek.getDate() + 6);
+           
+           if (initialDateObj >= startOfWeek && initialDateObj <= endOfWeek) {
+             const yyyy = initialDateObj.getFullYear();
+             const mm = formatZero(initialDateObj.getMonth() + 1);
+             const dd = formatZero(initialDateObj.getDate());
+             newDateStr = `${yyyy}-${mm}-${dd}`;
+           }
+         }
+       }
+    } else if (dragState.type === 'resize-top') {
+       newStart = Math.min(newStart + deltaMins, newEnd - 15);
+    } else if (dragState.type === 'resize-bottom') {
+       newEnd = Math.max(newEnd + deltaMins, newStart + 15);
+    }
+    
+    // Clamp to day bounds
+    if (newStart < 0) {
+       newEnd -= newStart; 
+       newStart = 0;
+    }
+    if (newEnd > 1440) {
+       newStart -= (newEnd - 1440);
+       newEnd = 1440;
+    }
+    
+    if (newStart !== dragState.currentStartMins || newEnd !== dragState.currentEndMins || newDateStr !== dragState.currentDateStr) {
+      setDragState(prev => prev ? {
+        ...prev,
+        currentStartMins: newStart,
+        currentEndMins: newEnd,
+        currentDateStr: newDateStr,
+        hasMoved: true
+      } : null);
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!dragState) return;
+    
+    if (dragState.hasMoved && onUpdateEvent) {
+      const originalEvent = events.find(ev => ev.id === dragState.eventId);
+      if (originalEvent) {
+         const startDateObj = new Date(originalEvent.startDate + 'T12:00:00');
+         const endDateObj = new Date(originalEvent.endDate + 'T12:00:00');
+         const diffTime = endDateObj.getTime() - startDateObj.getTime();
+         
+         const newStartDateObj = new Date(dragState.currentDateStr + 'T12:00:00');
+         const newEndDateObj = new Date(newStartDateObj.getTime() + diffTime);
+         
+         const yyyy = newEndDateObj.getFullYear();
+         const mm = formatZero(newEndDateObj.getMonth() + 1);
+         const dd = formatZero(newEndDateObj.getDate());
+         
+         onUpdateEvent({
+           ...originalEvent,
+           startDate: dragState.currentDateStr,
+           endDate: `${yyyy}-${mm}-${dd}`,
+           startTime: formatMinsToTime(dragState.currentStartMins),
+           endTime: formatMinsToTime(dragState.currentEndMins)
+         });
+      }
+    }
+    
+    if (containerRef.current) {
+      containerRef.current.releasePointerCapture(dragState.pointerId);
+    }
+    
+    // Delay nulling out dragState slightly so onClick doesn't fire immediately
+    setTimeout(() => {
+      setDragState(null);
+    }, 50);
+  };
+
 
   const formatZero = (n: number) => (n < 10 ? `0${n}` : `${n}`);
   const formatDateString = (d: Date) =>
@@ -373,7 +534,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
 
           {/* Absolute Timeline */}
-          <div className="relative min-w-[500px] h-[1440px] mt-4 mb-8 bg-white/[0.02] rounded-xl border border-white/10">
+          <div ref={containerRef} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} className="relative min-w-[500px] h-[1440px] mt-4 mb-8 bg-white/[0.02] rounded-xl border border-white/10 touch-none">
             {hours.map((hour) => (
               <div key={hour} className="absolute w-full flex items-center pointer-events-none" style={{ top: `${hour * 60}px`, height: '0px', marginTop: '-6px' }}>
                 <span className="w-16 text-[11px] text-white/40 font-mono flex-shrink-0 select-none pl-2 leading-none">
@@ -383,11 +544,24 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               </div>
             ))}
             
-            {filteredEvents.flatMap(evt => getEventSegmentsForDate(evt, formatDateString(currentDate)).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }))).map((evt) => { const height = Math.max(evt.eMins - evt.sMins, 25);
+            {filteredEvents.flatMap(evt => {
+                if (dragState && dragState.eventId === evt.id) {
+                   return [{
+                      ...evt,
+                      sMins: dragState.currentStartMins,
+                      eMins: dragState.currentEndMins,
+                      segIdx: 0
+                   }];
+                }
+                return getEventSegmentsForDate(evt, formatDateString(currentDate)).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }));
+             }).map((evt) => { 
+                const isDragging = dragState?.eventId === evt.id;
+                const height = Math.max(evt.eMins - evt.sMins, 25);
                 
                 return (
                   <div
-                    key={`${evt.id}-${evt.segIdx}`} onClick={() => onEditEvent(evt)}
+                    key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
+                    onClick={() => { if (!dragState?.hasMoved) onEditEvent(evt as CalendarEvent); }}
                     className={`absolute left-16 right-4 rounded-xl border ${getCategoryColorBadge(
                       evt.category
                     )} shadow-md backdrop-blur-md cursor-pointer hover:brightness-110 transition-all p-2 overflow-hidden`}
@@ -400,6 +574,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       </span>
                     </div>
                     {height >= 45 && evt.description && <p className="text-[11px] text-white/80 mt-1 line-clamp-1 truncate">{evt.description}</p>}
+                    <div 
+                      className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
+                      onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-top')}
+                    />
+                    <div 
+                      className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
+                      onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-bottom')}
+                    />
                   </div>
                 );
             })}
@@ -442,7 +624,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
 
             {/* Week Grid Rows - Absolute Timeline */}
-            <div className="relative h-[1440px] mt-4 mb-4 bg-white/[0.01] rounded-xl border border-white/5">
+            <div ref={containerRef} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} className="relative h-[1440px] mt-4 mb-4 bg-white/[0.01] rounded-xl border border-white/5 touch-none">
               {/* Background grid lines and labels */}
               {hours.map((hour) => (
                 <div key={hour} className="absolute w-full flex items-center pointer-events-none" style={{ top: `${hour * 60}px`, height: '0px', marginTop: '-6px' }}>
@@ -464,11 +646,28 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 return (
                   <React.Fragment key={dayIdx}>
                     {/* Events */}
-                    {filteredEvents.flatMap(evt => getEventSegmentsForDate(evt, dateStr).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }))).map((evt) => { const height = Math.max(evt.eMins - evt.sMins, 20);
+                    {filteredEvents.flatMap(evt => {
+                      if (dragState && dragState.eventId === evt.id) {
+                         if (dateStr === dragState.currentDateStr) {
+                           return [{
+                             ...evt,
+                             sMins: dragState.currentStartMins,
+                             eMins: dragState.currentEndMins,
+                             segIdx: 0
+                           }];
+                         } else {
+                           return []; // hide original event if moved to another day
+                         }
+                      }
+                      return getEventSegmentsForDate(evt, dateStr).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }));
+                    }).map((evt) => { 
+                      const isDragging = dragState?.eventId === evt.id;
+                      const height = Math.max(evt.eMins - evt.sMins, 20);
 
                       return (
                         <div
-                          key={`${evt.id}-${evt.segIdx}`} onClick={() => onEditEvent(evt)}
+                          key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
+                          onClick={() => { if (!dragState?.hasMoved) onEditEvent(evt as CalendarEvent); }}
                           className={`absolute p-1.5 rounded-lg border cursor-pointer hover:scale-[1.02] transition-all overflow-hidden shadow-md backdrop-blur-md ${getCategoryColorBadge(evt.category)}`}
                           style={{ 
                             top: `${evt.sMins}px`, 
@@ -486,6 +685,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                                {evt.startTime} - {evt.endTime}
                              </span>
                            )}
+                           <div 
+                             className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
+                             onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-top')}
+                           />
+                           <div 
+                             className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
+                             onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-bottom')}
+                           />
                         </div>
                       );
                     })}
