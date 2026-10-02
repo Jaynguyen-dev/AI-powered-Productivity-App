@@ -44,7 +44,8 @@ interface CustomSelectProps {
 }
 
 export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSelectProps) => {
-  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
+  const [coords, setCoords] = useState<{ top?: number, bottom?: number, left: number, width: number }>({ top: 0, left: 0, width: 0 });
+  const [isUp, setIsUp] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -68,7 +69,18 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
         onClick={(e) => {
           if (!isOpen && containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
-            setCoords({ top: rect.bottom, left: rect.left, width: rect.width });
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            
+            if (spaceBelow < 250 && spaceAbove > spaceBelow) {
+              // Open upwards
+              setIsUp(true);
+              setCoords({ bottom: window.innerHeight - rect.top, left: rect.left, width: rect.width });
+            } else {
+              // Open downwards
+              setIsUp(false);
+              setCoords({ top: rect.bottom, left: rect.left, width: rect.width });
+            }
           }
           setIsOpen(!isOpen);
         }}
@@ -85,13 +97,13 @@ export const CustomSelect = ({ value, onChange, options = CATEGORIES }: CustomSe
         <AnimatePresence>
           {isOpen && (
             <motion.div 
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            initial={{ opacity: 0, y: isUp ? 10 : -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            exit={{ opacity: 0, y: isUp ? 10 : -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
             ref={menuRef}
-            className="fixed z-[9999] mt-2 p-1.5 rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-1 max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
-            style={{ top: coords.top, left: coords.left, width: coords.width }}
+            className={`fixed z-[9999] ${isUp ? 'mb-2' : 'mt-2'} p-1.5 rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-1 max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent`}
+            style={{ top: coords.top !== undefined ? coords.top : 'auto', bottom: coords.bottom !== undefined ? coords.bottom : 'auto', left: coords.left, width: coords.width }}
           >
             {options.map((opt) => {
               const OptIcon = opt.icon || iconMap[opt.value] || <Circle className="w-4 h-4" />;
