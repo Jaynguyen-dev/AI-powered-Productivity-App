@@ -476,12 +476,12 @@ export default function App() {
       <BackgroundManager />
       
       {/* Zen Floating Glass Sidebar (Pill) */}
-      <aside className="hidden md:flex flex-col w-[80px] h-full shrink-0 items-center py-6 bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
-        <div className="w-12 h-12 rounded-full overflow-hidden shadow-lg shadow-blue-500/20 mb-8 cursor-pointer hover:scale-105 transition-transform ring-2 ring-white/10" onClick={() => setSidebarOpen(!sidebarOpen)}>
+      <aside className="hidden md:flex flex-col justify-evenly w-[80px] h-full shrink-0 items-center py-6 bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+        <div className="w-12 h-12 rounded-full overflow-hidden shadow-lg shadow-blue-500/20 cursor-pointer hover:scale-105 transition-transform ring-2 ring-white/10" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <img src="/logo.png" alt="Logo" className="w-full h-full object-cover bg-black" />
           </div>
         
-        <nav className="flex flex-col items-center gap-4 w-full">
+        
           {[
             { id: 'dashboard', icon: LayoutDashboard, title: 'Dashboard' },
             { id: 'calendar', icon: CalendarIcon, title: 'Calendar' },
@@ -506,9 +506,9 @@ export default function App() {
               </button>
             );
           })}
-        </nav>
+        
 
-        <div className="flex flex-col gap-4 mt-auto">
+        
           <button
             onClick={() => setTimerOpen(true)}
             className="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all cursor-pointer"
@@ -525,8 +525,7 @@ export default function App() {
             <Bot className="w-6 h-6" />
             <div className="absolute top-0 right-0 w-3 h-3 bg-blue-500 rounded-full border-2 border-black/50 animate-pulse"></div>
           </button>
-        </div>
-      </aside>
+        </aside>
 
       {/* Main Content Area (Glass Window) */}
       <div className="flex-1 flex flex-col h-full overflow-hidden rounded-[32px] overflow-hidden relative">

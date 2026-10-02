@@ -43,6 +43,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   
+  const wasDraggedRef = React.useRef(false);
   const activeInteractionRef = React.useRef<{
     eventId: string;
     type: 'move' | 'resize-top' | 'resize-bottom';
@@ -161,7 +162,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       if (!state) return;
       
       if (state.hasMoved) {
-        const cb = callbacksRef.current;
+          wasDraggedRef.current = true;
+          setTimeout(() => { wasDraggedRef.current = false; }, 200);
+          const cb = callbacksRef.current;
         if (cb.onUpdateEvent) {
           const originalEvent = cb.events.find(ev => ev.id === state.eventId);
           if (originalEvent) {
@@ -601,7 +604,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       
                       
                       
-                    onClick={() => { if (!activeInteractionRef.current?.hasMoved) onEditEvent(evt as CalendarEvent); }}
+                    onClick={(e) => { if (wasDraggedRef.current) { e.preventDefault(); e.stopPropagation(); return; } if (!activeInteractionRef.current?.hasMoved) onEditEvent(evt as CalendarEvent); }}
                     className={`absolute left-16 right-4 rounded-xl border ${getCategoryColorBadge(
                       evt.category
                     )} shadow-md backdrop-blur-md cursor-pointer hover:brightness-110 transition-all p-2 overflow-hidden`}
@@ -702,7 +705,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       
                       
                       
-                          onClick={() => { if (!activeInteractionRef.current?.hasMoved) onEditEvent(evt as CalendarEvent); }}
+                          onClick={(e) => { if (wasDraggedRef.current) { e.preventDefault(); e.stopPropagation(); return; } if (!activeInteractionRef.current?.hasMoved) onEditEvent(evt as CalendarEvent); }}
                           className={`absolute p-1.5 rounded-lg border cursor-pointer hover:scale-[1.02] transition-all overflow-hidden shadow-md backdrop-blur-md ${getCategoryColorBadge(evt.category)}`}
                           style={{ 
                             top: `${evt.sMins}px`, 
