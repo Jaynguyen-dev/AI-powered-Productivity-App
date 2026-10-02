@@ -590,19 +590,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               </div>
             ))}
             
-            {filteredEvents.flatMap(evt => {
-                if (activeInteractionRef.current && activeInteractionRef.current.eventId === evt.id) {
-                   return [{
-                      ...evt,
-                      sMins: activeInteractionRef.current.currentStartMins,
-                      eMins: activeInteractionRef.current.currentEndMins,
-                      startTime: formatMinsToTime(activeInteractionRef.current.currentStartMins),
-                      endTime: formatMinsToTime(activeInteractionRef.current.currentEndMins),
-                      segIdx: 0
-                   }];
-                }
-                return getEventSegmentsForDate(evt, formatDateString(currentDate)).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }));
-             }).map((evt) => { 
+              {filteredEvents.flatMap(evt => getEventSegmentsForDate(evt, formatDateString(currentDate)).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }))).map((evt) => { 
                 const isDragging = activeInteractionRef.current?.eventId === evt.id;
                 const height = Math.max(evt.eMins - evt.sMins, 25);
                 
@@ -703,23 +691,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 return (
                   <React.Fragment key={dayIdx}>
                     {/* Events */}
-                    {filteredEvents.flatMap(evt => {
-                      if (activeInteractionRef.current && activeInteractionRef.current.eventId === evt.id) {
-                         if (dateStr === activeInteractionRef.current.currentDateStr) {
-                           return [{
-                             ...evt,
-                             sMins: activeInteractionRef.current.currentStartMins,
-                             eMins: activeInteractionRef.current.currentEndMins,
-                             startTime: formatMinsToTime(activeInteractionRef.current.currentStartMins),
-                             endTime: formatMinsToTime(activeInteractionRef.current.currentEndMins),
-                             segIdx: 0
-                           }];
-                         } else {
-                           return []; // hide original event if moved to another day
-                         }
-                      }
-                      return getEventSegmentsForDate(evt, dateStr).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }));
-                    }).map((evt) => { 
+              {filteredEvents.flatMap(evt => getEventSegmentsForDate(evt, dateStr).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }))).map((evt) => { 
                       const isDragging = activeInteractionRef.current?.eventId === evt.id;
                       const height = Math.max(evt.eMins - evt.sMins, 20);
 
