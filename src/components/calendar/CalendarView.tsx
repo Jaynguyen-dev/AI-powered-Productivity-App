@@ -72,10 +72,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     e.stopPropagation();
     if (e.button !== 0) return;
     
-    // Capture pointer strictly to the target so that it continues receiving events even if moved outside the browser!
-    try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch (err) {}
+    
     
     
     const startMins = parseTimeToMins(event.startTime);
@@ -202,33 +199,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   };
 
 
-  const handlePointerMoveRef = React.useRef(handlePointerMove);
-  handlePointerMoveRef.current = handlePointerMove;
   
-  const handlePointerUpRef = React.useRef(handlePointerUp);
-  handlePointerUpRef.current = handlePointerUp;
-
-  useEffect(() => {
-    if (!dragState) return;
-    
-    const handleGlobalPointerMove = (e: PointerEvent) => {
-      handlePointerMoveRef.current(e as unknown as React.PointerEvent);
-    };
-    
-    const handleGlobalPointerUp = (e: PointerEvent) => {
-      handlePointerUpRef.current(e as unknown as React.PointerEvent);
-    };
-
-    window.addEventListener('pointermove', handleGlobalPointerMove);
-    window.addEventListener('pointerup', handleGlobalPointerUp);
-    window.addEventListener('pointercancel', handleGlobalPointerUp);
-    
-    return () => {
-      window.removeEventListener('pointermove', handleGlobalPointerMove);
-      window.removeEventListener('pointerup', handleGlobalPointerUp);
-      window.removeEventListener('pointercancel', handleGlobalPointerUp);
-    };
-  }, [dragState !== null]);
 
 
   const formatZero = (n: number) => (n < 10 ? `0${n}` : `${n}`);
