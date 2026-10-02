@@ -72,6 +72,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     e.stopPropagation();
     if (e.button !== 0) return;
     
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch (err) {}
+    
     
     
     
@@ -165,6 +169,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (!dragState) return;
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(dragState.pointerId);
+    } catch (err) {}
     
     if (dragState.hasMoved && onUpdateEvent) {
       const originalEvent = events.find(ev => ev.id === dragState.eventId);
@@ -564,6 +571,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 return (
                   <div
                     key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
+                      onPointerMove={handlePointerMove}
+                      onPointerUp={handlePointerUp}
+                      onPointerCancel={handlePointerUp}
                     onClick={() => { if (!dragState?.hasMoved) onEditEvent(evt as CalendarEvent); }}
                     className={`absolute left-16 right-4 rounded-xl border ${getCategoryColorBadge(
                       evt.category
@@ -580,10 +590,16 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     <div 
                       className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                       onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-top')}
+                         onPointerMove={handlePointerMove}
+                         onPointerUp={handlePointerUp}
+                         onPointerCancel={handlePointerUp}
                     />
                     <div 
                       className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                       onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-bottom')}
+                         onPointerMove={handlePointerMove}
+                         onPointerUp={handlePointerUp}
+                         onPointerCancel={handlePointerUp}
                     />
                   </div>
                 );
@@ -672,6 +688,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       return (
                         <div
                           key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
+                      onPointerMove={handlePointerMove}
+                      onPointerUp={handlePointerUp}
+                      onPointerCancel={handlePointerUp}
                           onClick={() => { if (!dragState?.hasMoved) onEditEvent(evt as CalendarEvent); }}
                           className={`absolute p-1.5 rounded-lg border cursor-pointer hover:scale-[1.02] transition-all overflow-hidden shadow-md backdrop-blur-md ${getCategoryColorBadge(evt.category)}`}
                           style={{ 
@@ -693,10 +712,16 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                            <div 
                              className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                              onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-top')}
+                         onPointerMove={handlePointerMove}
+                         onPointerUp={handlePointerUp}
+                         onPointerCancel={handlePointerUp}
                            />
                            <div 
                              className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                              onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-bottom')}
+                         onPointerMove={handlePointerMove}
+                         onPointerUp={handlePointerUp}
+                         onPointerCancel={handlePointerUp}
                            />
                         </div>
                       );
