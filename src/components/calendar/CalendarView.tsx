@@ -48,6 +48,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     initialStartMins: number;
     initialEndMins: number;
     initialDate: string;
+    initialDayIdx: number;
+    colShift?: number;
     startY: number;
     startX: number;
     colWidth: number;
@@ -96,6 +98,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
          if (state.colWidth > 0) {
            const deltaX = e.clientX - state.startX;
            const colShift = Math.round(deltaX / state.colWidth);
+           state.colShift = colShift;
            
            if (colShift !== 0) {
              const initialDateObj = new Date(state.initialDate + 'T12:00:00');
@@ -134,7 +137,21 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         state.currentEndMins = newEnd;
         state.currentDateStr = newDateStr;
         state.hasMoved = true;
-        forceRender({});
+        // Direct DOM update for zero-latency dragging
+        const el = document.getElementById(`event-card-${state.eventId}`);
+        if (el) {
+          el.style.top = `${newStart}px`;
+          el.style.height = `${Math.max(newEnd - newStart, 25)}px`;
+          if (state.colWidth > 0 && state.colShift !== undefined) {
+             const baseLeft = 12.5 + (state.initialDayIdx * 12.5);
+             const newLeftPercent = baseLeft + (state.colShift * 12.5);
+             el.style.left = `calc(${newLeftPercent}% + 4px)`;
+          }
+          const timeLabel = el.querySelector('.time-label');
+          if (timeLabel) {
+            timeLabel.textContent = `${formatMinsToTime(newStart)} - ${formatMinsToTime(newEnd)}`;
+          }
+        }
       }
     };
     
@@ -207,8 +224,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
        colW = (containerRef.current.getBoundingClientRect().width * 0.125);
     }
     
+    // Find day index based on start date
+    const dObj = new Date(event.startDate + 'T12:00:00');
+    const dayOfWeek = dObj.getDay(); 
+    // Assuming week view aligns with Sun-Sat (0-6)
+    
     activeInteractionRef.current = {
       eventId: event.id,
+      initialDayIdx: dayOfWeek,
       type,
       initialStartMins: startMins,
       initialEndMins: endMins,
@@ -585,7 +608,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 
                 return (
                   <div
-                    key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
+                    id={`event-card-${evt.id}`} key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
                       
                       
                       
@@ -597,7 +620,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   >
                     <div className="flex items-center justify-between gap-2">
                       <h4 className="text-sm font-semibold text-white truncate">{evt.title}</h4>
-                      <span className="text-[11px] font-mono text-white/80 opacity-80 flex-shrink-0">
+                      <span className="time-label text-[11px] font-mono text-white/80 opacity-80 flex-shrink-0">
                         {evt.startTime} - {evt.endTime}
                       </span>
                     </div>
@@ -702,7 +725,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                       return (
                         <div
-                          key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
+                          id={`event-card-${evt.id}`} key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
                       
                       
                       
@@ -720,7 +743,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                             {evt.title}
                           </span>
                           {height >= 35 && (
-                             <span className="block text-[9px] font-mono opacity-80 mt-0.5 truncate">
+                             <span className="time-label block text-[9px] font-mono opacity-80 mt-0.5 truncate">
                                {evt.startTime} - {evt.endTime}
                              </span>
                            )}
