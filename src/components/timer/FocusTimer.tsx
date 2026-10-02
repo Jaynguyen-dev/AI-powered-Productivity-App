@@ -380,12 +380,12 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             <div className='flex items-start justify-between gap-4 mb-8 flex-shrink-0'>
               <div className='flex items-center gap-4 min-w-0'>
                 {/* Timer Icon Container - Explicitly Sized & Padded */}
-                <div className='w-14 h-14 flex-shrink-0 rounded-[14px] p-0.5 shadow-md flex items-center justify-center'
-                  style={{ background: isRelax ? 'linear-gradient(135deg,#10b981,#0d9488)' : 'linear-gradient(135deg,#f43f5e,#e11d48)', transition: 'background 0.4s ease' }}>
-                  <div className='w-full h-full rounded-[12px] bg-slate-950 flex items-center justify-center p-2.5'>
-                    <TimerIcon className='w-full h-full object-contain flex-shrink-0' style={{ color: accentHex, transition: 'color 0.35s ease' }}/>
+                <div className='w-14 h-14 flex-shrink-0 rounded-[14px] overflow-hidden shadow-md relative'>
+                                        {/* Base image (Focus) always visible so no background shows during crossfade */}
+                    <img src="/focus-timer.jpg" alt="Focus Timer Logo" className="absolute inset-0 w-full h-full object-cover" />
+                    {/* Top image (Relax) fades in smoothly over the base */}
+                    <img src="/relax-timer.png" alt="Relax Timer Logo" className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[800ms] ease-in-out mix-blend-normal" style={{ opacity: isRelax ? 1 : 0 }} />
                   </div>
-                </div>
                 {/* Titles */}
                 <div className='min-w-0 flex flex-col justify-center gap-0.5'>
                   <p className='text-xl font-bold text-white leading-tight truncate'>Zen Focus</p>

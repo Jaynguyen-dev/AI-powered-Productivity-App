@@ -512,12 +512,12 @@ export default function App() {
 
         
           <button
-            onClick={() => setTimerOpen(true)}
-            className="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all cursor-pointer"
-            title="Focus Timer"
-          >
-            <TimerIcon className="w-5 h-5" />
-          </button>
+              onClick={() => setTimerOpen(true)}
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all cursor-pointer overflow-hidden relative"
+              title="Focus Timer"
+            >
+              <img src="/focus-timer.jpg" alt="Timer" className="absolute inset-0 w-full h-full object-cover" />
+            </button>
           
           <button
             onClick={() => setCopilotOpen(true)}
