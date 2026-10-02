@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { CalendarEvent, CalendarViewMode, Task, Project } from '../../types';
 import { GlassCard } from '../common/GlassCard';
 import {
@@ -59,6 +59,30 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (!dragState) return;
+    
+    const handleGlobalPointerMove = (e: PointerEvent) => {
+      // Create a synthetic-like event for our existing handlePointerMove
+      handlePointerMove(e as unknown as React.PointerEvent);
+    };
+    
+    const handleGlobalPointerUp = (e: PointerEvent) => {
+      handlePointerUp(e as unknown as React.PointerEvent);
+    };
+
+    window.addEventListener('pointermove', handleGlobalPointerMove);
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    window.addEventListener('pointercancel', handleGlobalPointerUp);
+    
+    return () => {
+      window.removeEventListener('pointermove', handleGlobalPointerMove);
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+      window.removeEventListener('pointercancel', handleGlobalPointerUp);
+    };
+  }, [dragState]);
+
+
   
   const formatMinsToTime = (mins: number) => {
     mins = Math.max(0, Math.min(1440, mins));
@@ -71,9 +95,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     e.stopPropagation();
     if (e.button !== 0) return;
     
-    if (containerRef.current) {
-      containerRef.current.setPointerCapture(e.pointerId);
-    }
+    // Use global window events for capturing drag
     
     const startMins = parseTimeToMins(event.startTime);
     const endMins = parseTimeToMins(event.endTime);
@@ -190,9 +212,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       }
     }
     
-    if (containerRef.current) {
-      containerRef.current.releasePointerCapture(dragState.pointerId);
-    }
+    
     
     // Delay nulling out dragState slightly so onClick doesn't fire immediately
     setTimeout(() => {
@@ -534,7 +554,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
 
           {/* Absolute Timeline */}
-          <div ref={containerRef} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} className="relative min-w-[500px] h-[1440px] mt-4 mb-8 bg-white/[0.02] rounded-xl border border-white/10 touch-none">
+          <div ref={containerRef}  className="relative min-w-[500px] h-[1440px] mt-4 mb-8 bg-white/[0.02] rounded-xl border border-white/10 touch-none">
             {hours.map((hour) => (
               <div key={hour} className="absolute w-full flex items-center pointer-events-none" style={{ top: `${hour * 60}px`, height: '0px', marginTop: '-6px' }}>
                 <span className="w-16 text-[11px] text-white/40 font-mono flex-shrink-0 select-none pl-2 leading-none">
@@ -550,6 +570,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       ...evt,
                       sMins: dragState.currentStartMins,
                       eMins: dragState.currentEndMins,
+                      startTime: formatMinsToTime(dragState.currentStartMins),
+                      endTime: formatMinsToTime(dragState.currentEndMins),
                       segIdx: 0
                    }];
                 }
@@ -624,7 +646,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
 
             {/* Week Grid Rows - Absolute Timeline */}
-            <div ref={containerRef} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} className="relative h-[1440px] mt-4 mb-4 bg-white/[0.01] rounded-xl border border-white/5 touch-none">
+            <div ref={containerRef}  className="relative h-[1440px] mt-4 mb-4 bg-white/[0.01] rounded-xl border border-white/5 touch-none">
               {/* Background grid lines and labels */}
               {hours.map((hour) => (
                 <div key={hour} className="absolute w-full flex items-center pointer-events-none" style={{ top: `${hour * 60}px`, height: '0px', marginTop: '-6px' }}>
@@ -653,6 +675,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                              ...evt,
                              sMins: dragState.currentStartMins,
                              eMins: dragState.currentEndMins,
+                             startTime: formatMinsToTime(dragState.currentStartMins),
+                             endTime: formatMinsToTime(dragState.currentEndMins),
                              segIdx: 0
                            }];
                          } else {

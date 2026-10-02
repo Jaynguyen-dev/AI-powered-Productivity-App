@@ -478,7 +478,7 @@ export default function App() {
       {/* Zen Floating Glass Sidebar (Pill) */}
       <aside className="hidden md:flex flex-col w-[80px] h-full shrink-0 items-center py-6 bg-black/10 backdrop-blur-md rounded-[32px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
         <div className="w-12 h-12 rounded-full overflow-hidden shadow-lg shadow-blue-500/20 mb-8 cursor-pointer hover:scale-105 transition-transform ring-2 ring-white/10" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover bg-white" />
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover bg-black" />
           </div>
         
         <nav className="flex-1 flex flex-col items-center gap-4 w-full">
@@ -544,7 +544,7 @@ export default function App() {
               </button>
             ) : (
               <div className="w-10 h-10 rounded-full overflow-hidden shadow-md ring-1 ring-white/10">
-                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover bg-white" />
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover bg-black" />
               </div>
             )}
             <span className="font-bold text-white text-xl capitalize">
