@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Task } from '../../types';
 import { GlassCard } from '../common/GlassCard';
+import { CustomSelect } from '../common/CustomSelect';
 import { soundService } from '../../services/soundService';
 import {
   Play, Pause, RotateCcw, Volume2, VolumeX,
@@ -442,16 +443,19 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               <label className='block text-[11px] font-semibold uppercase tracking-wider text-white/80 mb-3'>Linked Task</label>
               <div className='flex items-center gap-2 min-w-0'>
                 <div className='flex-1 min-w-0 relative'>
-                  <select value={selectedTaskId || ''} onChange={e => setSelectedTaskId(e.target.value || null)}
-                    className='w-full truncate px-4 py-3.5 rounded-xl bg-black/10 border border-white/10 text-white text-xs focus:outline-none focus:border-rose-400 cursor-pointer appearance-none pr-8'>
-                    <option value=''>No task linked</option>
-                    {tasks.filter(t => t.status !== 'completed').map(task => (
-                      <option key={task.id} value={task.id}>[{task.priority.toUpperCase()}] {task.title}</option>
-                    ))}
-                  </select>
-                  <div className='absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/40'>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                  </div>
+                  <CustomSelect 
+                      value={selectedTaskId || ''} 
+                      onChange={val => setSelectedTaskId(val || null)} 
+                      options={[
+                        { value: '', label: 'No task linked', icon: <X className="w-4 h-4" />, colorClass: 'text-white/50' },
+                        ...tasks.filter(t => t.status !== 'completed').map(task => ({
+                          value: task.id,
+                          label: `[${task.priority.toUpperCase()}] ${task.title}`,
+                          icon: <CheckCircle2 className="w-4 h-4" />,
+                          colorClass: task.priority === 'high' ? 'text-rose-400' : task.priority === 'medium' ? 'text-amber-400' : 'text-blue-400'
+                        }))
+                      ]}
+                    />
                 </div>
                 {selectedTask && onToggleTaskComplete && (
                   <button onClick={() => { onToggleTaskComplete(selectedTask.id); if (soundEnabled) soundService.playCompletionChime(); }}
