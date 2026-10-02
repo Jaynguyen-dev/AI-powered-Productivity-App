@@ -59,30 +59,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!dragState) return;
-    
-    const handleGlobalPointerMove = (e: PointerEvent) => {
-      // Create a synthetic-like event for our existing handlePointerMove
-      handlePointerMove(e as unknown as React.PointerEvent);
-    };
-    
-    const handleGlobalPointerUp = (e: PointerEvent) => {
-      handlePointerUp(e as unknown as React.PointerEvent);
-    };
-
-    window.addEventListener('pointermove', handleGlobalPointerMove);
-    window.addEventListener('pointerup', handleGlobalPointerUp);
-    window.addEventListener('pointercancel', handleGlobalPointerUp);
-    
-    return () => {
-      window.removeEventListener('pointermove', handleGlobalPointerMove);
-      window.removeEventListener('pointerup', handleGlobalPointerUp);
-      window.removeEventListener('pointercancel', handleGlobalPointerUp);
-    };
-  }, [dragState]);
-
-
+  
   
   const formatMinsToTime = (mins: number) => {
     mins = Math.max(0, Math.min(1440, mins));
@@ -219,6 +196,35 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       setDragState(null);
     }, 50);
   };
+
+
+  const handlePointerMoveRef = React.useRef(handlePointerMove);
+  handlePointerMoveRef.current = handlePointerMove;
+  
+  const handlePointerUpRef = React.useRef(handlePointerUp);
+  handlePointerUpRef.current = handlePointerUp;
+
+  useEffect(() => {
+    if (!dragState) return;
+    
+    const handleGlobalPointerMove = (e: PointerEvent) => {
+      handlePointerMoveRef.current(e as unknown as React.PointerEvent);
+    };
+    
+    const handleGlobalPointerUp = (e: PointerEvent) => {
+      handlePointerUpRef.current(e as unknown as React.PointerEvent);
+    };
+
+    window.addEventListener('pointermove', handleGlobalPointerMove);
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    window.addEventListener('pointercancel', handleGlobalPointerUp);
+    
+    return () => {
+      window.removeEventListener('pointermove', handleGlobalPointerMove);
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+      window.removeEventListener('pointercancel', handleGlobalPointerUp);
+    };
+  }, [dragState !== null]);
 
 
   const formatZero = (n: number) => (n < 10 ? `0${n}` : `${n}`);
