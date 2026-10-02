@@ -72,7 +72,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     e.stopPropagation();
     if (e.button !== 0) return;
     
-    // Use global window events for capturing drag
+    // Capture pointer strictly to the target so that it continues receiving events even if moved outside the browser!
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch (err) {}
+    
     
     const startMins = parseTimeToMins(event.startTime);
     const endMins = parseTimeToMins(event.endTime);
