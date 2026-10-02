@@ -41,10 +41,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   const [showTaskDeadlines, setShowTaskDeadlines] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const [dragState, setDragState] = useState<{
+  
+  const activeInteractionRef = React.useRef<{
     eventId: string;
     type: 'move' | 'resize-top' | 'resize-bottom';
-    pointerId: number;
     initialStartMins: number;
     initialEndMins: number;
     initialDate: string;
@@ -57,10 +57,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     hasMoved: boolean;
   } | null>(null);
 
+  const [, forceRender] = React.useState({});
+  
+  const callbacksRef = React.useRef({ onUpdateEvent, events, currentDate });
+  React.useEffect(() => {
+    callbacksRef.current = { onUpdateEvent, events, currentDate };
+  }, [onUpdateEvent, events, currentDate]);
+
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   
-  
+
   const formatMinsToTime = (mins: number) => {
     mins = Math.max(0, Math.min(1440, mins));
     const h = Math.floor(mins / 60);
@@ -68,30 +75,141 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   };
 
+  const formatZeroHelper = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+
+  React.useEffect(() => {
+    const handleGlobalPointerMove = (e: PointerEvent) => {
+      const state = activeInteractionRef.current;
+      if (!state) return;
+      
+      const deltaY = e.clientY - state.startY;
+      const deltaMins = Math.round(deltaY / 15) * 15;
+      
+      let newStart = state.initialStartMins;
+      let newEnd = state.initialEndMins;
+      let newDateStr = state.currentDateStr;
+      
+      if (state.type === 'move') {
+         newStart += deltaMins;
+         newEnd += deltaMins;
+         
+         if (state.colWidth > 0) {
+           const deltaX = e.clientX - state.startX;
+           const colShift = Math.round(deltaX / state.colWidth);
+           
+           if (colShift !== 0) {
+             const initialDateObj = new Date(state.initialDate + 'T12:00:00');
+             initialDateObj.setDate(initialDateObj.getDate() + colShift);
+             
+             const startOfWeek = new Date(callbacksRef.current.currentDate);
+             startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+             const endOfWeek = new Date(startOfWeek);
+             endOfWeek.setDate(endOfWeek.getDate() + 6);
+             
+             if (initialDateObj >= startOfWeek && initialDateObj <= endOfWeek) {
+               const yyyy = initialDateObj.getFullYear();
+               const mm = formatZeroHelper(initialDateObj.getMonth() + 1);
+               const dd = formatZeroHelper(initialDateObj.getDate());
+               newDateStr = `${yyyy}-${mm}-${dd}`;
+             }
+           }
+         }
+      } else if (state.type === 'resize-top') {
+         newStart = Math.min(newStart + deltaMins, newEnd - 15);
+      } else if (state.type === 'resize-bottom') {
+         newEnd = Math.max(newEnd + deltaMins, newStart + 15);
+      }
+      
+      if (newStart < 0) {
+         newEnd -= newStart; 
+         newStart = 0;
+      }
+      if (newEnd > 1440) {
+         newStart -= (newEnd - 1440);
+         newEnd = 1440;
+      }
+      
+      if (newStart !== state.currentStartMins || newEnd !== state.currentEndMins || newDateStr !== state.currentDateStr) {
+        state.currentStartMins = newStart;
+        state.currentEndMins = newEnd;
+        state.currentDateStr = newDateStr;
+        state.hasMoved = true;
+        forceRender({});
+      }
+    };
+    
+    const handleGlobalPointerUp = (e: PointerEvent) => {
+      const state = activeInteractionRef.current;
+      if (!state) return;
+      
+      if (state.hasMoved) {
+        const cb = callbacksRef.current;
+        if (cb.onUpdateEvent) {
+          const originalEvent = cb.events.find(ev => ev.id === state.eventId);
+          if (originalEvent) {
+             const startDateObj = new Date(originalEvent.startDate + 'T12:00:00');
+             const endDateObj = new Date(originalEvent.endDate + 'T12:00:00');
+             const diffTime = endDateObj.getTime() - startDateObj.getTime();
+             
+             const newStartDateObj = new Date(state.currentDateStr + 'T12:00:00');
+             const newEndDateObj = new Date(newStartDateObj.getTime() + diffTime);
+             
+             const yyyy = newEndDateObj.getFullYear();
+             const mm = formatZeroHelper(newEndDateObj.getMonth() + 1);
+             const dd = formatZeroHelper(newEndDateObj.getDate());
+             
+             const formatTime = (mins: number) => {
+               mins = Math.max(0, Math.min(1440, mins));
+               const h = Math.floor(mins / 60).toString().padStart(2, '0');
+               const m = Math.floor(mins % 60).toString().padStart(2, '0');
+               return `${h}:${m}`;
+             };
+
+             cb.onUpdateEvent({
+               ...originalEvent,
+               startDate: state.currentDateStr,
+               endDate: `${yyyy}-${mm}-${dd}`,
+               startTime: formatTime(state.currentStartMins),
+               endTime: formatTime(state.currentEndMins)
+             });
+          }
+        }
+      }
+      
+      activeInteractionRef.current = null;
+      forceRender({});
+    };
+
+    window.addEventListener('pointermove', handleGlobalPointerMove);
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    window.addEventListener('pointercancel', handleGlobalPointerUp);
+    window.addEventListener('mouseleave', handleGlobalPointerUp);
+
+    return () => {
+      window.removeEventListener('pointermove', handleGlobalPointerMove);
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+      window.removeEventListener('pointercancel', handleGlobalPointerUp);
+      window.removeEventListener('mouseleave', handleGlobalPointerUp);
+    };
+  }, []);
+
   const handlePointerDown = (e: React.PointerEvent, event: CalendarEvent, type: 'move' | 'resize-top' | 'resize-bottom') => {
     e.stopPropagation();
     if (e.button !== 0) return;
     
-    try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch (err) {}
-    
-    
-    
+    e.preventDefault(); // Stop native drag/selection
     
     const startMins = parseTimeToMins(event.startTime);
     const endMins = parseTimeToMins(event.endTime);
     
-    // Estimate column width based on container for week view
     let colW = 0;
     if (containerRef.current && viewMode === 'week') {
        colW = (containerRef.current.getBoundingClientRect().width * 0.125);
     }
     
-    setDragState({
+    activeInteractionRef.current = {
       eventId: event.id,
       type,
-      pointerId: e.pointerId,
       initialStartMins: startMins,
       initialEndMins: endMins,
       initialDate: event.startDate,
@@ -102,112 +220,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       currentStartMins: startMins,
       currentEndMins: endMins,
       hasMoved: false
-    });
+    };
+    forceRender({});
   };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragState) return;
-    
-    const deltaY = e.clientY - dragState.startY;
-    const deltaMins = Math.round(deltaY / 15) * 15; // snap to 15 mins
-    
-    let newStart = dragState.initialStartMins;
-    let newEnd = dragState.initialEndMins;
-    let newDateStr = dragState.currentDateStr;
-    
-    if (dragState.type === 'move') {
-       newStart += deltaMins;
-       newEnd += deltaMins;
-       
-       if (viewMode === 'week' && dragState.colWidth > 0) {
-         const deltaX = e.clientX - dragState.startX;
-         const colShift = Math.round(deltaX / dragState.colWidth);
-         
-         if (colShift !== 0) {
-           const initialDateObj = new Date(dragState.initialDate + 'T12:00:00');
-           initialDateObj.setDate(initialDateObj.getDate() + colShift);
-           
-           const startOfWeek = new Date(currentDate);
-           startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-           const endOfWeek = new Date(startOfWeek);
-           endOfWeek.setDate(endOfWeek.getDate() + 6);
-           
-           if (initialDateObj >= startOfWeek && initialDateObj <= endOfWeek) {
-             const yyyy = initialDateObj.getFullYear();
-             const mm = formatZero(initialDateObj.getMonth() + 1);
-             const dd = formatZero(initialDateObj.getDate());
-             newDateStr = `${yyyy}-${mm}-${dd}`;
-           }
-         }
-       }
-    } else if (dragState.type === 'resize-top') {
-       newStart = Math.min(newStart + deltaMins, newEnd - 15);
-    } else if (dragState.type === 'resize-bottom') {
-       newEnd = Math.max(newEnd + deltaMins, newStart + 15);
-    }
-    
-    // Clamp to day bounds
-    if (newStart < 0) {
-       newEnd -= newStart; 
-       newStart = 0;
-    }
-    if (newEnd > 1440) {
-       newStart -= (newEnd - 1440);
-       newEnd = 1440;
-    }
-    
-    if (newStart !== dragState.currentStartMins || newEnd !== dragState.currentEndMins || newDateStr !== dragState.currentDateStr) {
-      setDragState(prev => prev ? {
-        ...prev,
-        currentStartMins: newStart,
-        currentEndMins: newEnd,
-        currentDateStr: newDateStr,
-        hasMoved: true
-      } : null);
-    }
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (!dragState) return;
-    try {
-      (e.currentTarget as HTMLElement).releasePointerCapture(dragState.pointerId);
-    } catch (err) {}
-    
-    if (dragState.hasMoved && onUpdateEvent) {
-      const originalEvent = events.find(ev => ev.id === dragState.eventId);
-      if (originalEvent) {
-         const startDateObj = new Date(originalEvent.startDate + 'T12:00:00');
-         const endDateObj = new Date(originalEvent.endDate + 'T12:00:00');
-         const diffTime = endDateObj.getTime() - startDateObj.getTime();
-         
-         const newStartDateObj = new Date(dragState.currentDateStr + 'T12:00:00');
-         const newEndDateObj = new Date(newStartDateObj.getTime() + diffTime);
-         
-         const yyyy = newEndDateObj.getFullYear();
-         const mm = formatZero(newEndDateObj.getMonth() + 1);
-         const dd = formatZero(newEndDateObj.getDate());
-         
-         onUpdateEvent({
-           ...originalEvent,
-           startDate: dragState.currentDateStr,
-           endDate: `${yyyy}-${mm}-${dd}`,
-           startTime: formatMinsToTime(dragState.currentStartMins),
-           endTime: formatMinsToTime(dragState.currentEndMins)
-         });
-      }
-    }
-    
-    
-    
-    // Delay nulling out dragState slightly so onClick doesn't fire immediately
-    setTimeout(() => {
-      setDragState(null);
-    }, 50);
-  };
-
-
-  
-
 
   const formatZero = (n: number) => (n < 10 ? `0${n}` : `${n}`);
   const formatDateString = (d: Date) =>
@@ -553,28 +568,28 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             ))}
             
             {filteredEvents.flatMap(evt => {
-                if (dragState && dragState.eventId === evt.id) {
+                if (activeInteractionRef.current && activeInteractionRef.current.eventId === evt.id) {
                    return [{
                       ...evt,
-                      sMins: dragState.currentStartMins,
-                      eMins: dragState.currentEndMins,
-                      startTime: formatMinsToTime(dragState.currentStartMins),
-                      endTime: formatMinsToTime(dragState.currentEndMins),
+                      sMins: activeInteractionRef.current.currentStartMins,
+                      eMins: activeInteractionRef.current.currentEndMins,
+                      startTime: formatMinsToTime(activeInteractionRef.current.currentStartMins),
+                      endTime: formatMinsToTime(activeInteractionRef.current.currentEndMins),
                       segIdx: 0
                    }];
                 }
                 return getEventSegmentsForDate(evt, formatDateString(currentDate)).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }));
              }).map((evt) => { 
-                const isDragging = dragState?.eventId === evt.id;
+                const isDragging = activeInteractionRef.current?.eventId === evt.id;
                 const height = Math.max(evt.eMins - evt.sMins, 25);
                 
                 return (
                   <div
                     key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
-                      onPointerMove={handlePointerMove}
-                      onPointerUp={handlePointerUp}
-                      onPointerCancel={handlePointerUp}
-                    onClick={() => { if (!dragState?.hasMoved) onEditEvent(evt as CalendarEvent); }}
+                      
+                      
+                      
+                    onClick={() => { if (!activeInteractionRef.current?.hasMoved) onEditEvent(evt as CalendarEvent); }}
                     className={`absolute left-16 right-4 rounded-xl border ${getCategoryColorBadge(
                       evt.category
                     )} shadow-md backdrop-blur-md cursor-pointer hover:brightness-110 transition-all p-2 overflow-hidden`}
@@ -590,16 +605,16 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     <div 
                       className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                       onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-top')}
-                         onPointerMove={handlePointerMove}
-                         onPointerUp={handlePointerUp}
-                         onPointerCancel={handlePointerUp}
+                         
+                         
+                         
                     />
                     <div 
                       className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                       onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-bottom')}
-                         onPointerMove={handlePointerMove}
-                         onPointerUp={handlePointerUp}
-                         onPointerCancel={handlePointerUp}
+                         
+                         
+                         
                     />
                   </div>
                 );
@@ -666,14 +681,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   <React.Fragment key={dayIdx}>
                     {/* Events */}
                     {filteredEvents.flatMap(evt => {
-                      if (dragState && dragState.eventId === evt.id) {
-                         if (dateStr === dragState.currentDateStr) {
+                      if (activeInteractionRef.current && activeInteractionRef.current.eventId === evt.id) {
+                         if (dateStr === activeInteractionRef.current.currentDateStr) {
                            return [{
                              ...evt,
-                             sMins: dragState.currentStartMins,
-                             eMins: dragState.currentEndMins,
-                             startTime: formatMinsToTime(dragState.currentStartMins),
-                             endTime: formatMinsToTime(dragState.currentEndMins),
+                             sMins: activeInteractionRef.current.currentStartMins,
+                             eMins: activeInteractionRef.current.currentEndMins,
+                             startTime: formatMinsToTime(activeInteractionRef.current.currentStartMins),
+                             endTime: formatMinsToTime(activeInteractionRef.current.currentEndMins),
                              segIdx: 0
                            }];
                          } else {
@@ -682,16 +697,16 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       }
                       return getEventSegmentsForDate(evt, dateStr).map((seg, idx) => ({ ...evt, ...seg, segIdx: idx }));
                     }).map((evt) => { 
-                      const isDragging = dragState?.eventId === evt.id;
+                      const isDragging = activeInteractionRef.current?.eventId === evt.id;
                       const height = Math.max(evt.eMins - evt.sMins, 20);
 
                       return (
                         <div
                           key={`${evt.id}-${evt.segIdx}`} onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'move')}
-                      onPointerMove={handlePointerMove}
-                      onPointerUp={handlePointerUp}
-                      onPointerCancel={handlePointerUp}
-                          onClick={() => { if (!dragState?.hasMoved) onEditEvent(evt as CalendarEvent); }}
+                      
+                      
+                      
+                          onClick={() => { if (!activeInteractionRef.current?.hasMoved) onEditEvent(evt as CalendarEvent); }}
                           className={`absolute p-1.5 rounded-lg border cursor-pointer hover:scale-[1.02] transition-all overflow-hidden shadow-md backdrop-blur-md ${getCategoryColorBadge(evt.category)}`}
                           style={{ 
                             top: `${evt.sMins}px`, 
@@ -712,16 +727,16 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                            <div 
                              className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                              onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-top')}
-                         onPointerMove={handlePointerMove}
-                         onPointerUp={handlePointerUp}
-                         onPointerCancel={handlePointerUp}
+                         
+                         
+                         
                            />
                            <div 
                              className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize opacity-0 hover:opacity-100 bg-white/20"
                              onPointerDown={(e) => handlePointerDown(e, evt as CalendarEvent, 'resize-bottom')}
-                         onPointerMove={handlePointerMove}
-                         onPointerUp={handlePointerUp}
-                         onPointerCancel={handlePointerUp}
+                         
+                         
+                         
                            />
                         </div>
                       );
