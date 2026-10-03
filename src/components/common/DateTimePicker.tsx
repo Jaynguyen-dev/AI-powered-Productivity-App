@@ -59,7 +59,7 @@ export const CustomDatePicker = ({ value, onChange }: { value: string, onChange:
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-50 top-full mt-2 left-0 w-72 p-4 rounded-2xl bg-black/20 backdrop-blur-md border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)]"
+            className="absolute z-50 top-full mt-2 left-0 w-72 p-4 rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)]"
           >
             <div className="flex justify-between items-center mb-4">
               <button type="button" onClick={handlePrev} className="p-1.5 rounded-lg hover:bg-white/10 text-white transition-colors cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
@@ -159,7 +159,7 @@ export const CustomTimePicker = ({ value, onChange }: { value: string, onChange:
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-50 top-full mt-2 left-0 w-64 p-3 rounded-2xl bg-black/20 backdrop-blur-md border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex justify-between h-56 overflow-hidden"
+            className="absolute z-50 top-full mt-2 left-0 w-64 p-3 rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex justify-between h-56 overflow-hidden"
           >
             {/* Hours */}
             <div className="flex-1 overflow-y-auto scroll-smooth flex flex-col items-center border-r border-white/10 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
