@@ -25,6 +25,7 @@ import { ProjectsManagementView } from './components/projects/ProjectsManagement
 import { FocusTimer } from './components/timer/FocusTimer';
 import { ConversationalCopilot } from './components/conversation/ConversationalCopilot';
 import { ToastContainer } from './components/common/ToastContainer';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { celebrateTaskCompletion } from './utils/celebration';
 import { TutorialOverlay } from './components/common/TutorialOverlay';
 import { BackgroundManager } from './components/common/BackgroundManager';
