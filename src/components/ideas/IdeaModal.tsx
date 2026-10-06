@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IdeaNode, IdeaType, IdeaEdge, Project } from '../../types';
 import { Modal } from '../common/Modal';
+import { CustomSelect } from '../common/CustomSelect';
 import {
   Tag,
   Link as LinkIcon,
@@ -10,6 +11,13 @@ import {
   Plus,
   ArrowRight,
   Folder,
+  Brain,
+  Lightbulb,
+  Sparkles,
+  HelpCircle,
+  BookOpen,
+  Database,
+  Hash,
 } from 'lucide-react';
 
 interface IdeaModalProps {
