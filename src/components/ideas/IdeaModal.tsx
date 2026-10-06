@@ -128,18 +128,18 @@ export const IdeaModal: React.FC<IdeaModalProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-semibold text-white mb-1">Classification Type</label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value as IdeaType)}
-              className="w-full px-3 py-2 rounded-xl bg-white/80 backdrop-blur-md border border-white/40 text-black text-base focus:outline-none capitalize font-medium [&>option]:bg-white [&>option]:text-black"
-            >
-              <option value="concept">Concept (Core Architecture)</option>
-              <option value="hypothesis">Hypothesis (Testable Guess)</option>
-              <option value="insight">Insight (Empirical Discovery)</option>
-              <option value="question">Question (Open Exploration)</option>
-              <option value="reference">Reference (Literature / Citation)</option>
-              <option value="resource">Resource (Toolkit / Dataset)</option>
-            </select>
+            <CustomSelect
+                value={type}
+                onChange={(v) => setType(v as IdeaType)}
+                options={[
+                  { value: 'concept', label: 'Concept (Core Architecture)' },
+                  { value: 'hypothesis', label: 'Hypothesis (Testable Guess)' },
+                  { value: 'insight', label: 'Insight (Empirical Discovery)' },
+                  { value: 'question', label: 'Question (Open Exploration)' },
+                  { value: 'reference', label: 'Reference (Literature / Citation)' },
+                  { value: 'resource', label: 'Resource (Toolkit / Dataset)' },
+                ]}
+              />
           </div>
 
           <div>
@@ -147,18 +147,17 @@ export const IdeaModal: React.FC<IdeaModalProps> = ({
               <Folder className="w-3.5 h-3.5 text-blue-500" />
               Connected Project
             </label>
-            <select
-              value={connectedProjectId}
-              onChange={(e) => setConnectedProjectId(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/80 backdrop-blur-md border border-white/40 text-black text-base focus:outline-none font-medium [&>option]:bg-white [&>option]:text-black"
-            >
-              <option value="">No Project (Independent Node)</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
+            <CustomSelect
+                value={connectedProjectId}
+                onChange={setConnectedProjectId}
+                options={[
+                  { value: '', label: 'No Project (Independent Node)' },
+                  ...projects.map((p) => ({
+                    value: p.id,
+                    label: p.name,
+                  })),
+                ]}
+              />
           </div>
         </div>
 

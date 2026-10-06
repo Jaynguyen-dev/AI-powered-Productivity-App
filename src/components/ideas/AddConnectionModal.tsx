@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { IdeaNode, RelationshipType } from '../../types';
 import { Modal } from '../common/Modal';
+import { CustomSelect } from '../common/CustomSelect';
 import { ArrowRight, Link as LinkIcon } from 'lucide-react';
 
 interface AddConnectionModalProps {
@@ -66,19 +67,17 @@ export const AddConnectionModal: React.FC<AddConnectionModalProps> = ({
             <LinkIcon className="w-3.5 h-3.5 text-blue-500" />
             Connect Target Node
           </label>
-          <select
-            required
-            value={targetId}
-            onChange={(e) => setTargetId(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl bg-black/20 border border-white/10 text-white text-base focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-          >
-            <option value="">Select an existing node...</option>
-            {availableTargets.map((t) => (
-              <option key={t.id} value={t.id}>
-                [{t.type.toUpperCase()}] {t.title}
-              </option>
-            ))}
-          </select>
+          <CustomSelect
+              value={targetId}
+              onChange={setTargetId}
+              options={[
+                { value: '', label: 'Select an existing node...' },
+                ...availableTargets.map((t) => ({
+                  value: t.id,
+                  label: `[${t.type.toUpperCase()}] ${t.title}`
+                }))
+              ]}
+            />
         </div>
 
         {/* Relationship Type Selection */}
