@@ -496,7 +496,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             <button
               type="button"
               id="btn-manual-add-event"
-              onClick={() => onOpenCreateEventModal(formatDateString(currentDate))}
+              onClick={() => onOpenCreateEventModal(viewMode === 'day' ? formatDateString(currentDate) : undefined)}
               className="p-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-white hover:text-white border border-white/10 text-sm font-semibold flex items-center justify-center transition-all cursor-pointer"
               title="Create Event Manually"
             >
