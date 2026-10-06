@@ -779,11 +779,11 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                     key={type}
                     id={`arrow-${type}`}
                     viewBox="0 0 10 10"
-                    refX="30"
+                    refX="42"
                     refY="5"
-                    markerWidth="6"
-                    markerHeight="6"
-                    orient="auto-start-reverse"
+                    markerWidth="10"
+                    markerHeight="10"
+                    orient="auto" markerUnits="userSpaceOnUse"
                   >
                     <path
                       d="M 0 1.5 L 8 5 L 0 8.5 z"
