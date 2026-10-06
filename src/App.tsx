@@ -476,6 +476,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex p-3 sm:p-6 gap-4 selection:bg-blue-500/30 selection:text-blue-200 overflow-hidden text-white bg-transparent">
+        <ErrorBoundary>
       <BackgroundManager />
       
       {/* Zen Floating Glass Sidebar (Pill) */}
@@ -856,6 +857,7 @@ export default function App() {
           }} 
         />
       )}
-    </div>
-  );
-}
+    </ErrorBoundary>
+      </div>
+    );
+  }
