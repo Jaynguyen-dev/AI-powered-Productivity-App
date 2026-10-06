@@ -579,6 +579,17 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     return true;
   };
 
+  // Computed values for highlighting
+  const activeFocusId = hoveredNodeId || selectedIdeaId;
+  const connectedNodeIds = new Set<string>();
+  if (activeFocusId) {
+    connectedNodeIds.add(activeFocusId);
+    edges.forEach((edge) => {
+      if (edge.sourceId === activeFocusId) connectedNodeIds.add(edge.targetId);
+      if (edge.targetId === activeFocusId) connectedNodeIds.add(edge.sourceId);
+    });
+  }
+
   return (
     <div className="space-y-4">
       {/* Top Action Toolbar */}
