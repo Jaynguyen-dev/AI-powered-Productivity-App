@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { IdeaNode, IdeaEdge, IdeaType, Project, RelationshipType } from '../../types';
 import { GlassCard } from '../common/GlassCard';
+import { ErrorBoundary } from '../common/ErrorBoundary';
 import { InteractiveGraphCanvas } from './InteractiveGraphCanvas';
 import {
   Network,
