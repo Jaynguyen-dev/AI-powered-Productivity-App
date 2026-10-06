@@ -967,9 +967,9 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                       <text
                         x="12"
                         y="4"
-                        fill={isSelected ? '#ffffff' : '#94a3b8'}
+                        fill={activeFocusId ? (!isDimmed ? '#ffffff' : '#94a3b8') : '#cbd5e1'}
                         fontSize="11"
-                        fontWeight={isSelected ? 'bold' : '500'}
+                        fontWeight={activeFocusId ? (!isDimmed ? 'bold' : '500') : '500'}
                         className="select-none pointer-events-none"
                         style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,1)' }}
                       >
