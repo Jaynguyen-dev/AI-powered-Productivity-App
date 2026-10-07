@@ -32,6 +32,7 @@ interface IdeasKnowledgeViewProps {
   onAddConnectionDirect?: (sourceId: string, targetId: string, relationshipType: RelationshipType) => void;
   onDeleteIdea?: (ideaId: string) => void;
   onOpenCopilot?: () => void;
+  onUpdateIdeaPositions?: (positions: Record<string, {x: number, y: number, pinned?: boolean}>) => void;
 }
 
 export const IdeasKnowledgeView: React.FC<IdeasKnowledgeViewProps> = ({
@@ -46,6 +47,7 @@ export const IdeasKnowledgeView: React.FC<IdeasKnowledgeViewProps> = ({
   onAddConnectionDirect,
   onDeleteIdea,
   onOpenCopilot,
+  onUpdateIdeaPositions,
 }) => {
   const [activeMode, setActiveMode] = useState<'graph' | 'list'>('graph');
   const [selectedIdeaId, setSelectedIdeaId] = useState<string | null>(null);

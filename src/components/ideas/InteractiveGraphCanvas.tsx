@@ -427,7 +427,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     const container = containerRef.current;
     if (!container) return;
     
-    const handleNativeWheel = (e) => {
+    const handleNativeWheel = (e: WheelEvent) => {
       e.preventDefault();
       
       const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;

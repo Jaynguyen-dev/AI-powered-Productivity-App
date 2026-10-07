@@ -82,7 +82,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   const formatZeroHelper = (n: number) => (n < 10 ? `0${n}` : `${n}`);
 
   React.useEffect(() => {
-    const handleGlobalPointerMove = (e: PointerEvent) => {
+    const handleGlobalPointerMove = (evt: Event) => { const e = evt as PointerEvent;
       const state = activeInteractionRef.current;
       if (!state) return;
       
@@ -162,7 +162,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       }
     };
     
-    const handleGlobalPointerUp = (e: PointerEvent) => {
+    const handleGlobalPointerUp = (evt: Event) => { const e = evt as PointerEvent;
       const state = activeInteractionRef.current;
       if (!state) return;
       

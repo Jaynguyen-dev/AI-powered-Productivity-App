@@ -56,7 +56,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       setStatus('todo');
       
       const now = new Date();
-      const pad = (n) => n.toString().padStart(2, '0');
+      const pad = (n: number) => n.toString().padStart(2, '0');
       setDueDate(`${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`);
       setDueTime(`${pad(now.getHours())}:${pad(now.getMinutes())}`);
       setProjectId(projects[0]?.id || '');
