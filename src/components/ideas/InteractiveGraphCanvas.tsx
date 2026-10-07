@@ -170,10 +170,10 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     let animId: number;
     let isRunning = true;
 
-    const spacingMultiplier = spacingMode === 'expansive' ? 1.35 : spacingMode === 'compact' ? 0.85 : 1.05;
-    const minCollisionDist = 240 * spacingMultiplier;
-    const idealSpringDist = 260 * spacingMultiplier;
-    const repulsionConstant = 16000 * spacingMultiplier;
+    const spacingMultiplier = spacingMode === 'expansive' ? 1.8 : spacingMode === 'compact' ? 1.0 : 1.4;
+    const minCollisionDist = 280 * spacingMultiplier;
+    const idealSpringDist = 300 * spacingMultiplier;
+    const repulsionConstant = 25000 * spacingMultiplier;
 
     const runPhysicsStep = () => {
       if (!isRunning) return;
@@ -788,20 +788,20 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
               {['supports', 'contradicts', 'depends_on', 'inspired_by', 'part_of', 'related_to'].map(
                 (type) => (
                   <marker
-                    key={type}
-                    id={`arrow-${type}`}
-                    viewBox="0 0 10 10"
-                    refX="17"
-                    refY="5"
-                    markerWidth="10"
-                    markerHeight="10"
-                    orient="auto" markerUnits="userSpaceOnUse"
-                  >
-                    <path
-                      d="M 0 1.5 L 8 5 L 0 8.5 z"
-                      fill={getEdgeStroke(type as RelationshipType)}
-                    />
-                  </marker>
+                      key={type}
+                      id={`arrow-${type}`}
+                      viewBox="0 0 14 14"
+                      refX="19"
+                      refY="7"
+                      markerWidth="14"
+                      markerHeight="14"
+                      orient="auto" markerUnits="userSpaceOnUse"
+                    >
+                      <path
+                        d="M 0 2 L 12 7 L 0 12 L 3 7 z"
+                        fill={getEdgeStroke(type as RelationshipType)}
+                      />
+                    </marker>
                 )
               )}
             </defs>

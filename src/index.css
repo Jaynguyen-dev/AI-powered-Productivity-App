@@ -74,3 +74,14 @@
   }
 }
 
+
+@layer utilities {
+  @keyframes graph-flow {
+    to {
+      stroke-dashoffset: -20;
+    }
+  }
+  .graph-edge-flow {
+    animation: graph-flow 0.8s linear infinite;
+  }
+}
