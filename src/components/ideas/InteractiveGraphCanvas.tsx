@@ -836,7 +836,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                     const nx = -dy / len;
                     const ny = dx / len;
                     
-                    const CURVE_STRENGTH = 60;
+                    const CURVE_STRENGTH = Math.max(80, len * 0.25);
                     let offsetMultiplier = edgeIndex - (totalEdges - 1) / 2;
                     if (edge.sourceId > edge.targetId) offsetMultiplier *= -1;
                     
