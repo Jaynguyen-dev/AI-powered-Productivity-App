@@ -406,6 +406,31 @@ export default function App() {
     refreshAll();
   };
 
+  const handleUpdateIdeaPositions = useCallback((positions: Record<string, {x: number, y: number, pinned?: boolean}>) => {
+    const prev = storageService.getIdeas();
+    let changed = false;
+    const next = prev.map(idea => {
+      const pos = positions[idea.id];
+      if (pos && (idea.metadata?.x !== Math.round(pos.x) || idea.metadata?.y !== Math.round(pos.y) || idea.metadata?.pinned !== pos.pinned)) {
+        changed = true;
+        return {
+          ...idea,
+          metadata: {
+            ...idea.metadata,
+            x: Math.round(pos.x),
+            y: Math.round(pos.y),
+            pinned: pos.pinned !== undefined ? pos.pinned : idea.metadata?.pinned
+          }
+        };
+      }
+      return idea;
+    });
+    if (changed) {
+      storageService.saveIdeas(next);
+      setIdeas(next);
+    }
+  }, []);
+
   const handleDeleteIdea = (ideaId: string) => {
     const toDelete = ideas.find((i) => i.id === ideaId);
     storageService.deleteIdea(ideaId);
@@ -668,6 +693,7 @@ export default function App() {
             ideas={ideas}
             edges={edges}
             projects={projects}
+            onUpdateIdeaPositions={handleUpdateIdeaPositions}
             onQuickCapture={handleQuickCaptureIdea}
             onOpenCreateIdeaModal={(coords) => {
               const now = new Date().toISOString();

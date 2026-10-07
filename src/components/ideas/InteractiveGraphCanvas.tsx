@@ -45,6 +45,7 @@ interface InteractiveGraphCanvasProps {
   onAddConnectionDirect?: (sourceId: string, targetId: string, relationshipType: RelationshipType) => void;
   onDeleteIdea?: (ideaId: string) => void;
   onCreateIdeaAt?: (x: number, y: number) => void;
+  onUpdateIdeaPositions?: (positions: Record<string, {x: number, y: number, pinned?: boolean}>) => void;
 }
 
 interface NodePosition {
@@ -66,6 +67,7 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
   onAddConnectionDirect,
   onDeleteIdea,
   onCreateIdeaAt,
+  onUpdateIdeaPositions,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -404,8 +406,18 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
 
   const handleMouseUp = () => {
     setIsPanning(false);
-    if (draggedNodeId && !layoutFrozen) {
-      reheatSimulation(0.35);
+    if (draggedNodeId) {
+      if (!layoutFrozen) {
+        reheatSimulation(0.35);
+      }
+      const pos = nodePositions[draggedNodeId];
+      if (pos) {
+        if (onUpdateIdeaPositions) {
+          onUpdateIdeaPositions({
+            [draggedNodeId]: { x: Math.round(pos.x), y: Math.round(pos.y), pinned: pos.pinned }
+          });
+        }
+      }
     }
     setDraggedNodeId(null);
   };
@@ -452,14 +464,21 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
 
   // Toggle node pinning
   const togglePin = (nodeId: string) => {
-    setNodePositions((prev) => {
-      const current = prev[nodeId];
-      if (!current) return prev;
-      return {
-        ...prev,
-        [nodeId]: { ...current, pinned: !current.pinned },
-      };
-    });
+    const current = nodePositions[nodeId];
+    if (!current) return;
+    
+    const newPinned = !current.pinned;
+    
+    setNodePositions((prev) => ({
+      ...prev,
+      [nodeId]: { ...prev[nodeId], pinned: newPinned },
+    }));
+
+    if (onUpdateIdeaPositions) {
+      onUpdateIdeaPositions({
+        [nodeId]: { x: Math.round(current.x), y: Math.round(current.y), pinned: newPinned }
+      });
+    }
   };
 
   // Node Type styling
@@ -600,6 +619,15 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     });
     return groups;
   }, [edges]);
+
+  // Save all node positions when the layout stabilizes
+  useEffect(() => {
+    if (isLayoutStable && onUpdateIdeaPositions) {
+      onUpdateIdeaPositions(nodePositions);
+    }
+    // We intentionally omit nodePositions from deps to only fire when isLayoutStable changes to true
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLayoutStable]);
 
   return (
     <div className="space-y-4">
