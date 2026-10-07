@@ -590,8 +590,20 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
     });
   }
 
+
+  const edgeGroups = useMemo(() => {
+    const groups: Record<string, typeof edges> = {};
+    edges.forEach((e) => {
+      const key = [e.sourceId, e.targetId].sort().join('-');
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(e);
+    });
+    return groups;
+  }, [edges]);
+
   return (
     <div className="space-y-4">
+
       {/* Top Action Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-1">
         {/* View Mode & Physics Controls */}
@@ -807,57 +819,51 @@ export const InteractiveGraphCanvas: React.FC<InteractiveGraphCanvasProps> = ({
                 const isDimmed = activeFocusId && !isConnectedToFocus;
 
                 // Midpoint for label
-                const midX = (sourcePos.x + targetPos.x) / 2;
-                const midY = (sourcePos.y + targetPos.y) / 2;
+                let midX = (sourcePos.x + targetPos.x) / 2;
+                  let midY = (sourcePos.y + targetPos.y) / 2;
+
+                  const groupKey = [edge.sourceId, edge.targetId].sort().join('-');
+                  const groupEdges = edgeGroups[groupKey];
+                  const edgeIndex = groupEdges.findIndex((e) => e.id === edge.id);
+                  const totalEdges = groupEdges.length;
+
+                  let pathD = `M ${sourcePos.x} ${sourcePos.y} L ${targetPos.x} ${targetPos.y}`;
+                  
+                  if (totalEdges > 1) {
+                    const dx = targetPos.x - sourcePos.x;
+                    const dy = targetPos.y - sourcePos.y;
+                    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+                    const nx = -dy / len;
+                    const ny = dx / len;
+                    
+                    const CURVE_STRENGTH = 60;
+                    let offsetMultiplier = edgeIndex - (totalEdges - 1) / 2;
+                    if (edge.sourceId > edge.targetId) offsetMultiplier *= -1;
+                    
+                    const offset = offsetMultiplier * CURVE_STRENGTH;
+                    const cx = midX + nx * offset;
+                    const cy = midY + ny * offset;
+                    
+                    pathD = `M ${sourcePos.x} ${sourcePos.y} Q ${cx} ${cy} ${targetPos.x} ${targetPos.y}`;
+                    
+                    midX = midX + nx * (offset / 2);
+                    midY = midY + ny * (offset / 2);
+                  }
                 const strokeColor = getEdgeStroke(edge.relationshipType);
 
                 return (
                   <g key={edge.id} className="transition-opacity duration-200">
                     {/* Glowing under-line for connected focus */}
                     {isConnectedToFocus && (
-                      <line
-                        x1={sourcePos.x}
-                        y1={sourcePos.y}
-                        x2={targetPos.x}
-                        y2={targetPos.y}
-                        stroke={strokeColor}
-                        strokeWidth="7"
-                        strokeOpacity="0.25"
-                      />
+                      <path d={pathD} stroke={strokeColor} strokeWidth="7" strokeOpacity="0.25" fill="none" />
                     )}
 
                     {/* Primary connection line */}
-                    <line
-                      x1={sourcePos.x}
-                      y1={sourcePos.y}
-                      x2={targetPos.x}
-                      y2={targetPos.y}
-                      stroke={strokeColor}
-                      strokeWidth={isConnectedToFocus ? 2.8 : 1.8}
-                      strokeDasharray={
-                        edge.relationshipType === 'contradicts'
-                          ? '6 4'
-                          : edge.relationshipType === 'depends_on'
-                          ? '8 4'
-                          : undefined
-                      }
-                      strokeOpacity={isDimmed ? 0.12 : isConnectedToFocus ? 1 : 0.65}
-                      markerEnd={`url(#arrow-${edge.relationshipType})`}
-                    />
+                    <path d={pathD} stroke={strokeColor} strokeWidth={isConnectedToFocus ? 2.8 : 1.8} strokeDasharray={edge.relationshipType === 'contradicts' ? '6 4' : edge.relationshipType === 'depends_on' ? '8 4' : undefined} strokeOpacity={isDimmed ? 0.12 : isConnectedToFocus ? 1 : 0.65} markerEnd={`url(#arrow-${edge.relationshipType})`} fill="none" />
 
                     {/* Animated directional flow dash on active edge */}
                     {isConnectedToFocus && (
-                      <line
-                        x1={sourcePos.x}
-                        y1={sourcePos.y}
-                        x2={targetPos.x}
-                        y2={targetPos.y}
-                        stroke="#ffffff"
-                        strokeWidth="2.5"
-                        strokeDasharray="4 16"
-                        className="graph-edge-flow"
-                        strokeOpacity="0.85"
-                      />
+                      <path d={pathD} stroke="#ffffff" strokeWidth="2.5" strokeDasharray="4 16" className="graph-edge-flow" strokeOpacity="0.85" fill="none" />
                     )}
 
                     {/* Relationship Badge in middle of edge */}
