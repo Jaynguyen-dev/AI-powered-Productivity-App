@@ -19,7 +19,29 @@ export const storageService = {
   getTasks: (): Task[] => {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.TASKS);
-      return data ? JSON.parse(data) : INITIAL_TASKS;
+      const tasks: Task[] = data ? JSON.parse(data) : INITIAL_TASKS;
+      
+      const now = Date.now();
+      const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+      let hasDeletions = false;
+      
+      const filteredTasks = tasks.filter(task => {
+        if (task.status === 'completed' && task.completedAt) {
+          const completedTime = new Date(task.completedAt).getTime();
+          if (now - completedTime > ONE_WEEK_MS) {
+            hasDeletions = true;
+            return false;
+          }
+        }
+        return true;
+      });
+      
+      if (hasDeletions) {
+        localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(filteredTasks));
+        return filteredTasks;
+      }
+      
+      return tasks;
     } catch (e) {
       console.warn('Failed to read tasks from localStorage', e);
       return INITIAL_TASKS;
