@@ -7,6 +7,7 @@ class SoundService {
   private interactionListener: ((e: Event) => void) | null = null;
   private alarmGain: GainNode | null = null;
   private alarmSource: AudioBufferSourceNode | null = null;
+  private wakeLockOsc: OscillatorNode | null = null;
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -106,7 +107,9 @@ class SoundService {
     
     this.alarmSource.start();
 
-    // Cleanup resources after 90 seconds
+    // Cleanup resources after exactly 90 seconds
+    // Note: If the tab is fully suspended, setTimeout might be delayed, but the 
+    // AudioBufferSourceNode will continue to loop flawlessly in the OS audio thread until stopped.
     this.alarmTimeout = window.setTimeout(() => {
       this.stopAlarm();
     }, 90000);
@@ -116,10 +119,10 @@ class SoundService {
       this.stopAlarm();
     };
     
-    // Use capture to catch events early
+    // Only bind to unambiguous user events (click, keydown).
+    // Avoid 'pointerdown' as it can falsely trigger from phantom touch inputs or trackpad rests.
     window.addEventListener('click', this.interactionListener, { capture: true });
     window.addEventListener('keydown', this.interactionListener, { capture: true });
-    window.addEventListener('pointerdown', this.interactionListener, { capture: true });
   }
 
   stopAlarm() {
@@ -143,7 +146,6 @@ class SoundService {
     if (this.interactionListener) {
       window.removeEventListener('click', this.interactionListener, { capture: true });
       window.removeEventListener('keydown', this.interactionListener, { capture: true });
-      window.removeEventListener('pointerdown', this.interactionListener, { capture: true });
       this.interactionListener = null;
     }
   }
@@ -153,6 +155,17 @@ class SoundService {
     try {
       const ctx = this.getContext();
       if (!ctx) return;
+      
+      // Initialize wake lock to prevent aggressive browser audio suspension in background tabs
+      if (!this.wakeLockOsc) {
+        this.wakeLockOsc = ctx.createOscillator();
+        const silentGain = ctx.createGain();
+        silentGain.gain.value = 0.0001; // completely inaudible
+        this.wakeLockOsc.connect(silentGain);
+        silentGain.connect(ctx.destination);
+        this.wakeLockOsc.start();
+      }
+
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
