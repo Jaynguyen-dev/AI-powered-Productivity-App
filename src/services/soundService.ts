@@ -69,24 +69,16 @@ class SoundService {
 
     const now = ctx.currentTime;
     
-    // Create one continuous oscillator for the entire 90 seconds
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    // Use a clear, pleasant tone. Focus=C6(1046.5Hz), Break=A5(880Hz)
-    osc.type = 'sine';
-    osc.frequency.value = type === 'focus_end' ? 1046.5 : 880;
-
-    osc.connect(gain);
-    gain.connect(this.alarmGain);
-
-    // Initial silence
-    gain.gain.setValueAtTime(0, now);
-
-    // Schedule 90 seconds of continuous rhythmic beeping
-    // Pattern: "beep-beep (pause)" twice a second
+    // Create separate oscillators for each cycle to avoid browser AudioParam event limits
     for (let i = 0; i < 90 * 2; i++) {
       const cycleStart = now + i * 0.5;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      // Use a clear, pleasant tone. Focus=C6(1046.5Hz), Break=A5(880Hz)
+      osc.type = 'sine';
+      osc.frequency.value = type === 'focus_end' ? 1046.5 : 880;
 
       // First beep (0.0 to 0.08)
       gain.gain.setValueAtTime(0, cycleStart);
@@ -99,11 +91,15 @@ class SoundService {
       gain.gain.linearRampToValueAtTime(0.2, cycleStart + 0.16);
       gain.gain.setValueAtTime(0.2, cycleStart + 0.23);
       gain.gain.linearRampToValueAtTime(0, cycleStart + 0.25);
-    }
 
-    osc.start(now);
-    osc.stop(now + 90);
-    this.activeOscillators.push(osc);
+      osc.connect(gain);
+      gain.connect(this.alarmGain!);
+
+      osc.start(cycleStart);
+      osc.stop(cycleStart + 0.25);
+      
+      this.activeOscillators.push(osc);
+    }
 
     // Cleanup resources after exactly 90 seconds
     this.alarmTimeout = window.setTimeout(() => {
