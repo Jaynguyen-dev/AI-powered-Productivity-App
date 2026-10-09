@@ -3,11 +3,10 @@
 
 class SoundService {
   private ctx: AudioContext | null = null;
-  private alarmInterval: number | null = null;
   private alarmTimeout: number | null = null;
   private interactionListener: ((e: Event) => void) | null = null;
   private alarmGain: GainNode | null = null;
-  private activeOscillators: OscillatorNode[] = [];
+  private alarmSource: AudioBufferSourceNode | null = null;
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -56,52 +55,58 @@ class SoundService {
     }
   }
 
+  private createAlarmBuffer(ctx: AudioContext, type: 'focus_end' | 'break_end'): AudioBuffer {
+    // 0.5 seconds of audio
+    const sampleRate = ctx.sampleRate;
+    const frameCount = sampleRate * 0.5;
+    const buffer = ctx.createBuffer(1, frameCount, sampleRate);
+    const channelData = buffer.getChannelData(0);
+
+    const freq = type === 'focus_end' ? 1046.5 : 880;
+    const omega = 2 * Math.PI * freq / sampleRate;
+
+    for (let i = 0; i < frameCount; i++) {
+      const t = i / sampleRate; 
+      let amp = 0;
+      
+      // Beep 1: 0.0 to 0.1s
+      if (t >= 0.0 && t < 0.1) {
+        if (t < 0.01) amp = (t / 0.01) * 0.2;
+        else if (t > 0.08) amp = ((0.1 - t) / 0.02) * 0.2;
+        else amp = 0.2;
+      }
+      // Beep 2: 0.15 to 0.25s
+      else if (t >= 0.15 && t < 0.25) {
+        if (t < 0.16) amp = ((t - 0.15) / 0.01) * 0.2;
+        else if (t > 0.23) amp = ((0.25 - t) / 0.02) * 0.2;
+        else amp = 0.2;
+      }
+
+      channelData[i] = Math.sin(i * omega) * amp;
+    }
+
+    return buffer;
+  }
+
   startAlarm(type: 'focus_end' | 'break_end' = 'focus_end') {
-    this.stopAlarm(); // clear any existing
+    this.stopAlarm();
 
     const ctx = this.getContext();
     if (!ctx) return;
 
-    // Use a dedicated gain node so we can silence everything instantly if needed
     this.alarmGain = ctx.createGain();
     this.alarmGain.connect(ctx.destination);
-    this.activeOscillators = [];
 
-    const now = ctx.currentTime;
+    // Create and play looping buffer
+    const buffer = this.createAlarmBuffer(ctx, type);
+    this.alarmSource = ctx.createBufferSource();
+    this.alarmSource.buffer = buffer;
+    this.alarmSource.loop = true;
+    this.alarmSource.connect(this.alarmGain);
     
-    // Create separate oscillators for each cycle to avoid browser AudioParam event limits
-    for (let i = 0; i < 90 * 2; i++) {
-      const cycleStart = now + i * 0.5;
+    this.alarmSource.start();
 
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      // Use a clear, pleasant tone. Focus=C6(1046.5Hz), Break=A5(880Hz)
-      osc.type = 'sine';
-      osc.frequency.value = type === 'focus_end' ? 1046.5 : 880;
-
-      // First beep (0.0 to 0.08)
-      gain.gain.setValueAtTime(0, cycleStart);
-      gain.gain.linearRampToValueAtTime(0.2, cycleStart + 0.01);
-      gain.gain.setValueAtTime(0.2, cycleStart + 0.08);
-      gain.gain.linearRampToValueAtTime(0, cycleStart + 0.1);
-
-      // Second beep (0.15 to 0.23)
-      gain.gain.setValueAtTime(0, cycleStart + 0.15);
-      gain.gain.linearRampToValueAtTime(0.2, cycleStart + 0.16);
-      gain.gain.setValueAtTime(0.2, cycleStart + 0.23);
-      gain.gain.linearRampToValueAtTime(0, cycleStart + 0.25);
-
-      osc.connect(gain);
-      gain.connect(this.alarmGain!);
-
-      osc.start(cycleStart);
-      osc.stop(cycleStart + 0.25);
-      
-      this.activeOscillators.push(osc);
-    }
-
-    // Cleanup resources after exactly 90 seconds
+    // Cleanup resources after 90 seconds
     this.alarmTimeout = window.setTimeout(() => {
       this.stopAlarm();
     }, 90000);
@@ -118,6 +123,11 @@ class SoundService {
   }
 
   stopAlarm() {
+    if (this.alarmSource) {
+      try { this.alarmSource.stop(); } catch (e) {}
+      try { this.alarmSource.disconnect(); } catch (e) {}
+      this.alarmSource = null;
+    }
     if (this.alarmGain) {
       try {
         this.alarmGain.gain.setValueAtTime(0, this.getContext()?.currentTime || 0);
@@ -126,16 +136,6 @@ class SoundService {
       this.alarmGain = null;
     }
 
-    // Stop all scheduled oscillators to free memory immediately
-    this.activeOscillators.forEach(osc => {
-      try { osc.stop(); } catch (e) {}
-    });
-    this.activeOscillators = [];
-
-    if (this.alarmInterval !== null) {
-      window.clearInterval(this.alarmInterval);
-      this.alarmInterval = null;
-    }
     if (this.alarmTimeout !== null) {
       window.clearTimeout(this.alarmTimeout);
       this.alarmTimeout = null;
