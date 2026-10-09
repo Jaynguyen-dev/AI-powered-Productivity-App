@@ -6,6 +6,8 @@ class SoundService {
   private alarmInterval: number | null = null;
   private alarmTimeout: number | null = null;
   private interactionListener: ((e: Event) => void) | null = null;
+  private alarmGain: GainNode | null = null;
+  private activeOscillators: OscillatorNode[] = [];
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -57,15 +59,45 @@ class SoundService {
   startAlarm(type: 'focus_end' | 'break_end' = 'focus_end') {
     this.stopAlarm(); // clear any existing
 
-    // Play immediately once
-    this.playCompletionChime(type);
+    const ctx = this.getContext();
+    if (!ctx) return;
 
-    // Loop every 4 seconds
-    this.alarmInterval = window.setInterval(() => {
-      this.playCompletionChime(type);
-    }, 4000);
+    // Use a dedicated gain node so we can silence everything instantly if needed
+    this.alarmGain = ctx.createGain();
+    this.alarmGain.connect(ctx.destination);
+    this.activeOscillators = [];
 
-    // Stop automatically after 90 seconds (1 minute 30 seconds)
+    const now = ctx.currentTime;
+    const notes = type === 'focus_end' ? [523.25, 659.25, 783.99, 1046.5] : [783.99, 659.25, 523.25];
+    const noteDuration = 0.45;
+
+    // Pre-schedule loops for 90 seconds (every 4 seconds = roughly 23 loops)
+    // This entirely avoids JS setInterval throttling in background tabs!
+    for (let loop = 0; loop < 23; loop++) {
+      const loopStart = now + loop * 4;
+      
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, loopStart + idx * 0.12);
+
+        gain.gain.setValueAtTime(0, loopStart + idx * 0.12);
+        gain.gain.linearRampToValueAtTime(0.2, loopStart + idx * 0.12 + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, loopStart + idx * 0.12 + noteDuration);
+
+        osc.connect(gain);
+        gain.connect(this.alarmGain!);
+
+        osc.start(loopStart + idx * 0.12);
+        osc.stop(loopStart + idx * 0.12 + noteDuration + 0.05);
+
+        this.activeOscillators.push(osc);
+      });
+    }
+
+    // Cleanup resources after 90 seconds
     this.alarmTimeout = window.setTimeout(() => {
       this.stopAlarm();
     }, 90000);
@@ -78,9 +110,24 @@ class SoundService {
     // Use capture to catch events early
     window.addEventListener('click', this.interactionListener, { capture: true });
     window.addEventListener('keydown', this.interactionListener, { capture: true });
+    window.addEventListener('pointerdown', this.interactionListener, { capture: true });
   }
 
   stopAlarm() {
+    if (this.alarmGain) {
+      try {
+        this.alarmGain.gain.setValueAtTime(0, this.getContext()?.currentTime || 0);
+        this.alarmGain.disconnect();
+      } catch (e) {}
+      this.alarmGain = null;
+    }
+
+    // Stop all scheduled oscillators to free memory immediately
+    this.activeOscillators.forEach(osc => {
+      try { osc.stop(); } catch (e) {}
+    });
+    this.activeOscillators = [];
+
     if (this.alarmInterval !== null) {
       window.clearInterval(this.alarmInterval);
       this.alarmInterval = null;
@@ -92,6 +139,7 @@ class SoundService {
     if (this.interactionListener) {
       window.removeEventListener('click', this.interactionListener, { capture: true });
       window.removeEventListener('keydown', this.interactionListener, { capture: true });
+      window.removeEventListener('pointerdown', this.interactionListener, { capture: true });
       this.interactionListener = null;
     }
   }
