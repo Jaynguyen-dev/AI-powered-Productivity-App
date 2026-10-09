@@ -68,36 +68,44 @@ class SoundService {
     this.activeOscillators = [];
 
     const now = ctx.currentTime;
-    const notes = type === 'focus_end' ? [523.25, 659.25, 783.99, 1046.5] : [783.99, 659.25, 523.25];
-    const noteDuration = 0.45;
+    
+    // Create one continuous oscillator for the entire 90 seconds
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-    // Pre-schedule loops for 90 seconds (every 4 seconds = roughly 23 loops)
-    // This entirely avoids JS setInterval throttling in background tabs!
-    for (let loop = 0; loop < 23; loop++) {
-      const loopStart = now + loop * 4;
-      
-      notes.forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+    // Use a clear, pleasant tone. Focus=C6(1046.5Hz), Break=A5(880Hz)
+    osc.type = 'sine';
+    osc.frequency.value = type === 'focus_end' ? 1046.5 : 880;
 
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, loopStart + idx * 0.12);
+    osc.connect(gain);
+    gain.connect(this.alarmGain);
 
-        gain.gain.setValueAtTime(0, loopStart + idx * 0.12);
-        gain.gain.linearRampToValueAtTime(0.2, loopStart + idx * 0.12 + 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.001, loopStart + idx * 0.12 + noteDuration);
+    // Initial silence
+    gain.gain.setValueAtTime(0, now);
 
-        osc.connect(gain);
-        gain.connect(this.alarmGain!);
+    // Schedule 90 seconds of continuous rhythmic beeping
+    // Pattern: "beep-beep (pause)" twice a second
+    for (let i = 0; i < 90 * 2; i++) {
+      const cycleStart = now + i * 0.5;
 
-        osc.start(loopStart + idx * 0.12);
-        osc.stop(loopStart + idx * 0.12 + noteDuration + 0.05);
+      // First beep (0.0 to 0.08)
+      gain.gain.setValueAtTime(0, cycleStart);
+      gain.gain.linearRampToValueAtTime(0.2, cycleStart + 0.01);
+      gain.gain.setValueAtTime(0.2, cycleStart + 0.08);
+      gain.gain.linearRampToValueAtTime(0, cycleStart + 0.1);
 
-        this.activeOscillators.push(osc);
-      });
+      // Second beep (0.15 to 0.23)
+      gain.gain.setValueAtTime(0, cycleStart + 0.15);
+      gain.gain.linearRampToValueAtTime(0.2, cycleStart + 0.16);
+      gain.gain.setValueAtTime(0.2, cycleStart + 0.23);
+      gain.gain.linearRampToValueAtTime(0, cycleStart + 0.25);
     }
 
-    // Cleanup resources after 90 seconds
+    osc.start(now);
+    osc.stop(now + 90);
+    this.activeOscillators.push(osc);
+
+    // Cleanup resources after exactly 90 seconds
     this.alarmTimeout = window.setTimeout(() => {
       this.stopAlarm();
     }, 90000);
