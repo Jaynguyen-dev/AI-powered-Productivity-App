@@ -87,15 +87,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       if (!state) return;
       
       const deltaY = e.clientY - state.startY;
-      const deltaMins = Math.round(deltaY / 15) * 15;
-      
       let newStart = state.initialStartMins;
-      let newEnd = state.initialEndMins;
-      let newDateStr = state.currentDateStr;
-      
-      if (state.type === 'move') {
-         newStart += deltaMins;
-         newEnd += deltaMins;
+        let newEnd = state.initialEndMins;
+        let newDateStr = state.currentDateStr;
+        
+        if (state.type === 'move') {
+           const rawStart = state.initialStartMins + deltaY;
+           newStart = Math.round(rawStart / 15) * 15;
+           newEnd = newStart + (state.initialEndMins - state.initialStartMins);
          
          if (state.colWidth > 0) {
            const deltaX = e.clientX - state.startX;
@@ -120,10 +119,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
            }
          }
       } else if (state.type === 'resize-top') {
-         newStart = Math.min(newStart + deltaMins, newEnd - 15);
-      } else if (state.type === 'resize-bottom') {
-         newEnd = Math.max(newEnd + deltaMins, newStart + 15);
-      }
+           const rawStart = state.initialStartMins + deltaY;
+           newStart = Math.round(rawStart / 15) * 15;
+           newStart = Math.min(newStart, newEnd - 15);
+        } else if (state.type === 'resize-bottom') {
+           const rawEnd = state.initialEndMins + deltaY;
+           newEnd = Math.round(rawEnd / 15) * 15;
+           newEnd = Math.max(newEnd, state.initialStartMins + 15);
+        }
       
               if (state.type === 'move') {
           if (newStart < 0) {
@@ -196,7 +199,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                startDate: state.currentDateStr,
                endDate: `${yyyy}-${mm}-${dd}`,
                startTime: formatTime(state.currentStartMins),
-               endTime: formatTime(state.currentEndMins)
+               endTime: formatTime(state.currentEndMins),
+                 durationMinutes: (state.currentEndMins < state.currentStartMins ? state.currentEndMins + 1440 : state.currentEndMins) - state.currentStartMins
              });
           }
         }

@@ -97,7 +97,13 @@ export const EventModal: React.FC<EventModalProps> = ({
       startTime,
       endDate: endDate || startDate,
       endTime: endTime || startTime,
-      durationMinutes,
+        durationMinutes: (function() {
+          const [sH, sM] = startTime.split(':').map(Number);
+          const [eH, eM] = (endTime || startTime).split(':').map(Number);
+          let dur = (eH * 60 + eM) - (sH * 60 + sM);
+          if (dur < 0) dur += 24 * 60;
+          return dur;
+        })(),
       recurrence,
       recurrenceRuleText: recurrence !== 'none' ? recurrenceRuleText : undefined,
       category,
