@@ -59,12 +59,27 @@ export const NaturalLanguageModal: React.FC<NaturalLanguageModalProps> = ({
     }
   }, [isOpen, initialPrompt]);
 
+
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const timer = setTimeout(() => {
+      if (inputText.trim()) {
+        handleInterpret(inputText);
+      } else {
+        setParseResult(null);
+      }
+    }, 400); // 400ms debounce
+    
+    return () => clearTimeout(timer);
+  }, [inputText, isOpen]);
+
   const handleInterpret = async (textToParse: string) => {
     if (!textToParse.trim()) return;
     setIsParsing(true);
     try {
-      // Anchored to simulated current time: 2026-09-19
-      const refDate = new Date(2026, 8, 19, 9, 0, 0);
+      // Use actual current time
+        const refDate = new Date();
       const result = await schedulingService.parse(textToParse, refDate);
       setParseResult(result);
 
@@ -184,10 +199,7 @@ export const NaturalLanguageModal: React.FC<NaturalLanguageModalProps> = ({
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => {
-                    setInputText(prompt);
-                    handleInterpret(prompt);
-                  }}
+                  onClick={() => setInputText(prompt)}
                   className="text-[11px] px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 transition-colors text-left"
                 >
                   "{prompt}"
