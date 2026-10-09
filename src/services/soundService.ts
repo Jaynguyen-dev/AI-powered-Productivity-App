@@ -3,6 +3,9 @@
 
 class SoundService {
   private ctx: AudioContext | null = null;
+  private alarmInterval: number | null = null;
+  private alarmTimeout: number | null = null;
+  private interactionListener: ((e: Event) => void) | null = null;
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -48,6 +51,48 @@ class SoundService {
       });
     } catch (e) {
       console.warn('Audio chime notice failed to play', e);
+    }
+  }
+
+  startAlarm(type: 'focus_end' | 'break_end' = 'focus_end') {
+    this.stopAlarm(); // clear any existing
+
+    // Play immediately once
+    this.playCompletionChime(type);
+
+    // Loop every 4 seconds
+    this.alarmInterval = window.setInterval(() => {
+      this.playCompletionChime(type);
+    }, 4000);
+
+    // Stop automatically after 90 seconds (1 minute 30 seconds)
+    this.alarmTimeout = window.setTimeout(() => {
+      this.stopAlarm();
+    }, 90000);
+
+    // Add listener to stop on any interaction
+    this.interactionListener = () => {
+      this.stopAlarm();
+    };
+    
+    // Use capture to catch events early
+    window.addEventListener('click', this.interactionListener, { capture: true });
+    window.addEventListener('keydown', this.interactionListener, { capture: true });
+  }
+
+  stopAlarm() {
+    if (this.alarmInterval !== null) {
+      window.clearInterval(this.alarmInterval);
+      this.alarmInterval = null;
+    }
+    if (this.alarmTimeout !== null) {
+      window.clearTimeout(this.alarmTimeout);
+      this.alarmTimeout = null;
+    }
+    if (this.interactionListener) {
+      window.removeEventListener('click', this.interactionListener, { capture: true });
+      window.removeEventListener('keydown', this.interactionListener, { capture: true });
+      this.interactionListener = null;
     }
   }
 

@@ -252,7 +252,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         if (prev <= 1) {
           clearInterval(iv);
           setIsRunning(false);
-          if (soundEnabled) soundService.playCompletionChime(isRelax ? 'break_end' : 'focus_end');
+          if (soundEnabled) soundService.startAlarm(isRelax ? 'break_end' : 'focus_end');
           if (!isRelax) setCompletedRounds(r => r + 1);
           return 0;
         }
