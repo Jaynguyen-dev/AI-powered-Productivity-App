@@ -318,5 +318,91 @@ export class RuleBasedSchedulingParser implements ISchedulingParser {
   }
 }
 
-// Unified scheduling service instance
-export const schedulingService: ISchedulingParser = new RuleBasedSchedulingParser();
+
+export class AIBasedSchedulingParser implements ISchedulingParser {
+  private formatZero(n: number): string {
+    return n < 10 ? `0${n}` : `${n}`;
+  }
+
+  private formatDateString(d: Date): string {
+    const year = d.getFullYear();
+    const month = this.formatZero(d.getMonth() + 1);
+    const day = this.formatZero(d.getDate());
+    return `${year}-${month}-${day}`;
+  }
+
+  async parse(input: string, referenceDate: Date = new Date()): Promise<NaturalLanguageParsingResult> {
+    const rawText = input.trim();
+    if (!rawText) throw new Error('Input text is empty');
+
+    try {
+      const currentDate = this.formatDateString(referenceDate);
+      const currentTime = `${this.formatZero(referenceDate.getHours())}:${this.formatZero(referenceDate.getMinutes())}`;
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `Create a calendar event exactly matching this description: "${rawText}". Calculate dates accurately relative to today.`,
+          history: [],
+          workspaceContext: {
+            currentDate,
+            currentTime,
+            events: [],
+            tasks: [],
+            ideas: [],
+            projects: []
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('AI parser failed, falling back to rule-based');
+      }
+
+      const data = await response.json();
+      const createAction = data.actions?.find((a: any) => a.type === 'create_event');
+      
+      if (createAction && createAction.payload) {
+        const p = createAction.payload;
+        
+        // Derive category and color
+        const category = p.category || 'deep_work';
+        let color = '#06b6d4'; // default cyan (deep work)
+        switch (category) {
+          case 'meeting': color = '#6366f1'; break;
+          case 'study': color = '#10b981'; break;
+          case 'personal': color = '#f59e0b'; break;
+          case 'review': color = '#ec4899'; break;
+          case 'deadline': color = '#ef4444'; break;
+        }
+
+        return {
+          rawText,
+          title: p.title || 'Scheduled Activity',
+          startDate: p.startDate || currentDate,
+          startTime: p.startTime || '10:00',
+          endDate: p.endDate || p.startDate || currentDate,
+          endTime: p.endTime || '11:00',
+          durationMinutes: p.durationMinutes || 60,
+          isAllDay: false,
+          recurrence: p.recurrence || 'none',
+          recurrenceRuleText: '',
+          category: category as EventCategory,
+          color,
+          confidence: 0.98,
+          uncertainties: ['Parsed dynamically using AI Copilot']
+        };
+      }
+      
+      throw new Error('No create_event action returned');
+    } catch (err) {
+      console.warn('AI Parsing failed, falling back to regex:', err);
+      return new RuleBasedSchedulingParser().parse(input, referenceDate);
+    }
+  }
+}
+
+// Unified scheduling service instance uses AI first, falls back to regex
+export const schedulingService: ISchedulingParser = new AIBasedSchedulingParser();
+
